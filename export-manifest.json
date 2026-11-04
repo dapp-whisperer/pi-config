@@ -1,0 +1,134 @@
+{
+  ".gitignore": {
+    "mode": "0o644",
+    "sha256": "de46ca71b20bf7dbc2df3669aeb780a0418229975f51cfc30d72bf4bbd0f88ec"
+  },
+  "README.md": {
+    "mode": "0o644",
+    "sha256": "eb72f8ddb5dc56a408354696beffc5a2e6971097ca72f2830ba98293d92bc625"
+  },
+  "bootstrap.sh": {
+    "mode": "0o755",
+    "sha256": "06fc151511e59172d742106bdb43c7c204867635b5672b098200d2055d25c76c"
+  },
+  "defaults.json": {
+    "mode": "0o644",
+    "sha256": "4094dc80ffebf133cddd2ac8f963e35af2d452a92396860a73ab870dc6aa7e87"
+  },
+  "export.py": {
+    "mode": "0o644",
+    "sha256": "9c7f9974d8af7f143cc60adc7e6249ad239958c1cd55d5da19426d6e92e19db3"
+  },
+  "install.py": {
+    "mode": "0o644",
+    "sha256": "2e161acb35815eada1f19760dc356e0a9171b668d2a9ec15aa671d3e46e2209b"
+  },
+  "launch.mjs": {
+    "mode": "0o644",
+    "sha256": "a9d29a073216ba7b91e0a1d86dfc0cf50892a3bb3789362c8b73ccb298b9f68f"
+  },
+  "manifest.json": {
+    "mode": "0o644",
+    "sha256": "0bff9dba593e37f9decefe1d4c185e6196972931efdea66991de2eeb589aed43"
+  },
+  "package-lock.json": {
+    "mode": "0o644",
+    "sha256": "544eb0d3a76f782eac5ed67c981bbb3ff128d8d0c6e6e07b4f9a0c87c03e86e5"
+  },
+  "package.json": {
+    "mode": "0o644",
+    "sha256": "a438169c503a0d0e133f74a2a2c3b81080f5d11f4ec06b1cf58fb70dec52f617"
+  },
+  "patch.mjs": {
+    "mode": "0o644",
+    "sha256": "1b81ba70ea4b14dc8fbc24d5e167034e6535aa9f820abd576e26bd15fb2d7568"
+  },
+  "patches/pi-ask-user-bottom-dock.patch": {
+    "mode": "0o644",
+    "sha256": "fbbf4bf057cc9ccff7dc59ecfcf6bb44e64251fa4fe38286a499c4c40673d8d2"
+  },
+  "resources/humanlayer-auto-advance.ts": {
+    "mode": "0o644",
+    "sha256": "320cb5a51231628822f6c19bdb4f4b0ac5b4a80cbbf59d6ce5bdb642b843cd56"
+  },
+  "resources/themes/ayu-dark-palette.json": {
+    "mode": "0o644",
+    "sha256": "fd5523de66aeabd8593245d85b984730d24a202b5fa02a4b95fe8b6490cd5d18"
+  },
+  "resources/themes/ayu-mirage-dotfiles.json": {
+    "mode": "0o644",
+    "sha256": "3d345863d697800ee7f36daee4b448dcefa7333d9756190a7dc7c49f82c3a3b1"
+  },
+  "resources/themes/catppuccin-frappe-mauve.json": {
+    "mode": "0o644",
+    "sha256": "15e5ff942d7d7d916606c7336e371e68bc4b74729278bba91ff0f239eaee1320"
+  },
+  "resources/themes/catppuccin-latte-mauve.json": {
+    "mode": "0o644",
+    "sha256": "2ab4e404aa5c84f614a98137eccdf868dcc26bdebfd8277137553e264f0195a6"
+  },
+  "resources/themes/catppuccin-macchiato-mauve.json": {
+    "mode": "0o644",
+    "sha256": "eb8321fcd4da4e327a947d5f48fe92275062a5ddfd088c8c6592a4b0cbddb560"
+  },
+  "resources/themes/catppuccin-mocha-mauve.json": {
+    "mode": "0o644",
+    "sha256": "e21305bcae27f2a2e604090805166faa275e62b5dd323e2f1f1b85c3923ad473"
+  },
+  "resources/themes/duskfox-palette.json": {
+    "mode": "0o644",
+    "sha256": "4a66193c4f0db1c5eda8a342b1c5b226b1a5b4bfba925df137612066953b52ea"
+  },
+  "resources/themes/flexoki-dark-palette.json": {
+    "mode": "0o644",
+    "sha256": "61c7754ff107fa78bae9ef2c5ab04e881fefeb47329c8ac7981cacffaa19b576"
+  },
+  "resources/themes/gruvbox-dark-palette.json": {
+    "mode": "0o644",
+    "sha256": "5ff4089e145b68b98d659b7ced8471e1778162cbf8ce53c6b42bb17a8611cda5"
+  },
+  "resources/themes/kanagawa-wave-palette.json": {
+    "mode": "0o644",
+    "sha256": "7706d3dc464763526937e6786661134a51bb0b1a18624e11bc3257b34da88ed6"
+  },
+  "resources/themes/monokai-palette.json": {
+    "mode": "0o644",
+    "sha256": "e855f8f77c41831dfc4e591a901ec8a5ff16c668a5e7adc8713f9b87ea4ccf28"
+  },
+  "resources/themes/ocean-dark-palette.json": {
+    "mode": "0o644",
+    "sha256": "231cd43e53bcd7c5ef5f52e4fc3426ae3b7fe802cef57dc9ac7da9bc92c331e4"
+  },
+  "resources/themes/one-dark-palette.json": {
+    "mode": "0o644",
+    "sha256": "4c0e001faa8473a1bd16ecce25b49f6eba6c2fd5421a8186f301d423c80f268f"
+  },
+  "resources/themes/solarized-dark-dotfiles.json": {
+    "mode": "0o644",
+    "sha256": "ad93d82f445c5830436d0956e21a013769c599fffc194b464b5712dd454b8258"
+  },
+  "resources/themes/solarized-light-dotfiles.json": {
+    "mode": "0o644",
+    "sha256": "ae001c2a886b49896cb597a18bf0b2c62cf4e8a1898a431e5b5fe598c6427406"
+  },
+  "resources/themes/tokyonight-night-palette.json": {
+    "mode": "0o644",
+    "sha256": "566513f9fceb619360c0bbcb7f7f848c8433a9519e88cc489f97963569816023"
+  },
+  "resources/themes/tomorrow-night-bright-palette.json": {
+    "mode": "0o644",
+    "sha256": "f54216e44c69a0e3fc9f0cea63beb7f1001066e4f1eedf1b42466b8f23a3e583"
+  },
+  "test_runtime.mjs": {
+    "mode": "0o644",
+    "sha256": "f25a0b29bfd20b0f794b80ed09a997c605096fc9660344dcb14c458fdc8a487b"
+  },
+  "test_safety.py": {
+    "mode": "0o644",
+    "sha256": "9df685c4c25d631bb0eeb80a73d482d732dcd133fdd91a38d445a6212b24ac0e"
+  },
+  "tests.py": {
+    "mode": "0o644",
+    "sha256": "bf974f1557c292f7435069740311f3530654844240fb5221bdb34c14014e275c"
+  }
+}

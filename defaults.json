@@ -1,0 +1,10 @@
+{
+  "theme": "system",
+  "collapseChangelog": true,
+  "terminal": {"showTerminalProgress": false},
+  "defaultThinkingLevel": "low",
+  "treeFilterMode": "default",
+  "extensions": ["-builtin:mcp"],
+  "enableInstallTelemetry": false,
+  "defaultProjectTrust": "ask"
+}

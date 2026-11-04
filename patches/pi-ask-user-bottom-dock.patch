@@ -1,0 +1,45 @@
+--- a/index.ts
++++ b/index.ts
+@@ -468,10 +468,14 @@
+ 
+ type AskMode = "select" | "freeform" | "comment";
+ 
+-const ASK_OVERLAY_MAX_HEIGHT_RATIO = 0.85;
++const ASK_OVERLAY_MAX_HEIGHT_RATIO = 0.95;
++const ASK_OVERLAY_MAX_HEIGHT = "95%";
+ const ASK_OVERLAY_MIN_RENDER_LINES = 8;
+-const ASK_OVERLAY_WIDTH = "92%";
++const ASK_OVERLAY_WIDTH = "100%";
+ const ASK_OVERLAY_MIN_WIDTH = 40;
++// Dock the prompt to the bottom edge (Claude Code style): short prompts sit on
++// the input line, tall ones grow upward instead of floating mid-window.
++const ASK_OVERLAY_ANCHOR = "bottom-center" as const;
+ const SINGLE_SELECT_SPLIT_PANE_MIN_WIDTH = 84;
+ const SINGLE_SELECT_SPLIT_PANE_LEFT_MIN_WIDTH = 32;
+ const SINGLE_SELECT_SPLIT_PANE_RIGHT_MIN_WIDTH = 28;
+@@ -529,10 +533,10 @@
+          return {
+             overlay: true,
+             overlayOptions: {
+-               anchor: "center" as const,
++               anchor: ASK_OVERLAY_ANCHOR,
+                width: ASK_OVERLAY_WIDTH,
+                minWidth: ASK_OVERLAY_MIN_WIDTH,
+-               maxHeight: "85%",
++               maxHeight: ASK_OVERLAY_MAX_HEIGHT,
+                margin: 1,
+             },
+             ...(onHandle ? { onHandle } : {}),
+@@ -543,10 +547,10 @@
+          return {
+             overlay: true,
+             overlayOptions: {
+-               anchor: "center" as const,
++               anchor: ASK_OVERLAY_ANCHOR,
+                width: ASK_OVERLAY_WIDTH,
+                minWidth: ASK_OVERLAY_MIN_WIDTH,
+-               maxHeight: "85%",
++               maxHeight: ASK_OVERLAY_MAX_HEIGHT,
+                margin: 1,
+             },
+             ...(onHandle ? { onHandle } : {}),

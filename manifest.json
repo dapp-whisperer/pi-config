@@ -1,0 +1,47 @@
+{
+  "nodeVersion": "24.15.0",
+  "node": {
+    "darwin-arm64": "372331b969779ab5d15b949884fc6eaf88d5afe87bde8ba881d6400b9100ffc4",
+    "darwin-x64": "ffd5ee293467927f3ee731a553eb88fd1f48cf74eebc2d74a6babe4af228673b",
+    "linux-arm64": "73afc234d558c24919875f51c2d1ea002a2ada4ea6f83601a383869fefa64eed",
+    "linux-x64": "44836872d9aec49f1e6b52a9a922872db9a2b02d235a616a5681b6a85fec8d89"
+  },
+  "sources": [
+    {
+      "repo": "humanlayer/humanlayer-pi",
+      "sha": "f4bd3ed65cfdb8dfea474b4cadce2ed90cc4acbd",
+      "sha256": "886972001eb26f4dfc6e5a9f8559f9134a1dfdeff68de6a3a691581f2e83f605",
+      "skills": []
+    },
+    {
+      "repo": "davebcn87/pi-autoresearch",
+      "sha": "04b8a50dac7efe80ffc91648bd00ed9b022e24c2",
+      "sha256": "3ce42eefb3da2728fddde4e89e1dee09e0239dd96c031936d38fb8dbc4358802",
+      "skills": []
+    },
+    {
+      "repo": "EveryInc/compound-engineering-plugin",
+      "sha": "071b08ea7d30e74c5210eb9ef9d62a4c8f4b8b81",
+      "sha256": "9713420e0d64492bd9b21d3effa79d1280f640249803e4f172c4635eb13ae7d1",
+      "skills": [
+        "skills"
+      ]
+    },
+    {
+      "repo": "firecrawl/skills",
+      "sha": "458d9d0331fb31121fd38e0e09ae5036f952784b",
+      "sha256": "348d3ef511a8e5cda7f460f01a25be97622cc58af0eef9afe5b10fcbad335e5a",
+      "skills": [
+        "skills"
+      ]
+    },
+    {
+      "repo": "AminBlg/SimpleEnglish",
+      "sha": "a6fcb4fde098b33617cc1578d151ebf58774b883",
+      "sha256": "67344d0782e4870d5d042a2c037cc62eb0bc502a9882800d75415bda99d1d0cd",
+      "skills": [
+        "skills/simple-english"
+      ]
+    }
+  ]
+}
