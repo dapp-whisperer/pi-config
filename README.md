@@ -11,28 +11,31 @@ No Python, Git, system Node/npm, patch, sudo or system-package changes are requi
 Node is **not** a prerequisite. Linux x64/arm64 and macOS x64/arm64 Node archives
 have fixed SHA-256 checksums in `manifest.json`. No Windows support.
 
-The publisher must substitute the reviewed **40-character commit SHA** and the
-SHA-256 of `https://codeload.github.com/dapp-whisperer/pi-config/tar.gz/COMMIT`:
+Clone and review the public checkout, then run its installer (Git is needed only for this method):
 
 ```sh
-curl --connect-timeout 30 --max-time 900 -fsSL https://raw.githubusercontent.com/dapp-whisperer/pi-config/COMMIT/bootstrap.sh \
-  | sh -s -- COMMIT ARCHIVE_SHA256
+git clone https://github.com/dapp-whisperer/pi-config.git
+cd pi-config
+./bootstrap.sh
+# Optional public HumanLayer:
+./bootstrap.sh --with-humanlayer
 ```
 
-For the optional public HumanLayer installation, use:
+The script uses its own directory, not your working directory. Piped execution
+requires an explicit commit and checksum.
+
+### Pinned release (no Git required)
+
+This immutable command installs reviewed release v1.1.0 (no placeholders to replace):
 
 ```sh
-curl --connect-timeout 30 --max-time 900 -fsSL https://raw.githubusercontent.com/dapp-whisperer/pi-config/COMMIT/bootstrap.sh \
-  | sh -s -- --with-humanlayer COMMIT ARCHIVE_SHA256
+curl --connect-timeout 30 --max-time 900 -fsSL https://raw.githubusercontent.com/dapp-whisperer/pi-config/6a74e5eda42fed727dcee593826537ed105d3c0a/bootstrap.sh \
+  | sh -s -- 6a74e5eda42fed727dcee593826537ed105d3c0a 55b0173f27375d801475de485194c8e9f462febdf8e48dfe80f16e2024539b04
 ```
 
-`bootstrap.sh --help` and `node install.mjs --help` describe the option.
-No main/tag fetches occur during installation. Alternatively, review a checkout
-and run `sh bootstrap.sh --checkout "$PWD"` from the public export (or
-`sh pi/bootstrap/bootstrap.sh --checkout "$PWD/pi/bootstrap"` from the canonical checkout).
-Put `--with-humanlayer` before `--checkout` to opt in. Checkout mode trusts the
-explicit local directory; it is not the public immutable-archive verification path. The initial immutable command can only
-be finalized after this source is committed; do not substitute `main`.
+For optional public HumanLayer, insert `--with-humanlayer` after `sh -s --`.
+Explicit local checkout mode remains available with `--checkout <directory>`;
+it trusts local source rather than verifying a public archive.
 
 Add `$HOME/.local/bin` to PATH. Run `pi-health`, then `pi` and `/login` (or set
 provider API keys). The default install is core-only: no HumanLayer download, installed helper/skills,
@@ -75,10 +78,7 @@ staging directory before publishing a release. Command links are prepared before
 atomically switching `current`; exceptions remove newly created links and unique
 activation temporaries, preserving the old selection. Incomplete releases left by
 older installers are retained as `.incomplete-<id>` and rebuilt on rerun. Existing
-agent settings/auth are never overwritten. The separate UI preferences file
-`~/.pi/settings.json` receives `toolBackground: "transparent"` only when that key
-is absent; existing keys and explicit tool-background choices are preserved.
-This disables tool framing, not subagent viewer message separators. Existing unrelated command paths are refused.
+settings/auth are never overwritten. Existing unrelated command paths are refused.
 Existing global package declarations or autoloaded extensions are rejected with
 migration guidance, not silently disabled: back up and explicitly remove/migrate
 those declarations yourself. Project package declarations are also refused.
@@ -120,8 +120,6 @@ The allowlist is based on dev-VM settings, not the older general-machine list:
   consolidated public skills (replaces three overlapping skill-source groups);
   SimpleEnglish from public immutable sources. Licenses
   are retained with the downloaded repositories (MIT for these skill sources).
-- Managed model-first footer in both launchers, with stock usage accounting and
-  status rows; tested against Pi 1.5.0 at narrow and wide widths with dim colors.
 - Existing public palette themes. No private provider/model defaults, inherited
   trust, credentials, local run data, or absolute dev-VM paths.
 

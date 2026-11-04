@@ -24,7 +24,7 @@ test('complete Python-free bootstrap and offline runtime preservation', {timeout
   fs.writeFileSync(path.join(b,'private-sentinel'),'never export');const clean=path.join(home,'clean');run(process.execPath,[path.join(b,'export.mjs'),clean]);assert.equal(fs.existsSync(path.join(clean,'private-sentinel')),false);
   fs.unlinkSync(path.join(b,'defaults.json'));fs.symlinkSync(path.join(a,'defaults.json'),path.join(b,'defaults.json'));run(process.execPath,[path.join(b,'export.mjs'),path.join(home,'refuse-links')],false);
   // Real shell bootstrap downloads/checks pinned Node under restricted PATH.
-  run('/bin/sh',[path.join(source,'bootstrap.sh'),'--checkout',a]);
+  run(path.join(a,'bootstrap.sh')); // clone-and-run from unrelated cwd, no arguments
   const current=path.join(home,'.local/share/personal-pi/current'),bin=path.join(home,'.local/bin'),node=path.join(current,'node/bin/node');
   assert.equal(fs.existsSync(path.join(bin,'pih')),false);assert.equal(fs.existsSync(path.join(current,'source/resources/humanlayer-auto-advance.ts')),false);
   assert.equal(fs.existsSync(path.join(current,'upstream/humanlayer-humanlayer-pi')),false);

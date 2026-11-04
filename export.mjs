@@ -40,6 +40,7 @@ export const FILES=[
   "test_runtime.mjs",
   "test_footer.mjs",
   "test_safety.mjs",
+  "test_first_run.mjs",
   "tests.mjs"
 ];
 const source=path.dirname(fileURLToPath(import.meta.url));
