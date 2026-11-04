@@ -16,6 +16,15 @@ export function activateRelease(root,release,bindir,commands) {
  try {for(const name of commands) {const p=path.join(bindir,name); if(!fs.existsSync(p)&&!fs.lstatSync(p,{throwIfNoEntry:false})) {fs.symlinkSync(path.join(root,'current',name),p); created.push(p);}} fs.symlinkSync(release,temporary); fs.renameSync(temporary,path.join(root,'current'));}
  catch(error) {for(const p of created) fs.unlinkSync(p); throw error;} finally {fs.rmSync(temporary,{force:true});}
 }
+export function seedUiPreferences(home) {
+ const file=path.join(home,'.pi/settings.json');
+ const existing=fs.existsSync(file);
+ const prefs=existing?JSON.parse(fs.readFileSync(file,'utf8')):{};
+ if(Object.hasOwn(prefs,'toolBackground')) return;
+ prefs.toolBackground='transparent';
+ fs.mkdirSync(path.dirname(file),{recursive:true});
+ fs.writeFileSync(file,JSON.stringify(prefs,null,2)+'\n',{mode:0o600});
+}
 export async function install({home=os.homedir(),humanlayer=false,fetch=download}={}) {
  const root=path.join(home,'.local/share/personal-pi'), current=path.join(root,'current'), bindir=path.join(home,'.local/bin');
  const previous=path.join(current,'options.json'); humanlayer ||= fs.existsSync(previous)&&JSON.parse(fs.readFileSync(previous)).humanlayer;
@@ -53,6 +62,7 @@ export async function install({home=os.homedir(),humanlayer=false,fetch=download
   }
   for(const [name,expected] of Object.entries(JSON.parse(fs.readFileSync(path.join(release,'integrity.json'))))) if(hash(fs.readFileSync(path.join(release,name)))!==expected) throw Error('Installed release modified: '+name);
   if(!fs.existsSync(settings)) {fs.mkdirSync(agent,{recursive:true}); fs.copyFileSync(path.join(source,'defaults.json'),settings);}
+  seedUiPreferences(home);
   execFileSync(path.join(release,'node/bin/node'),[path.join(release,'source/launch.mjs'),'pi-health'],{cwd:home,env:{...process.env,HOME:home},stdio:'inherit'});
   fs.mkdirSync(bindir,{recursive:true}); activateRelease(root,release,bindir,commands); console.log('Installed '+release+'; add '+bindir+' to PATH.');
   return release;

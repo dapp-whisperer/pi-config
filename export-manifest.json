@@ -4,7 +4,7 @@
     "mode": "0o644"
   },
   "README.md": {
-    "sha256": "981ad3a26da74065ea71ee963a48a57ea812f0b7e4e4e5bae4961b9651bd628d",
+    "sha256": "cc3629865ecf508e03a95b61171e79adcdc7cba110f3ee51ec6f33fb64e27858",
     "mode": "0o644"
   },
   "archive.mjs": {
@@ -32,7 +32,7 @@
     "mode": "0o644"
   },
   "install.mjs": {
-    "sha256": "14fbc652f7f17aad6d055037fb7dd54131aeb80b132751c92cd28a994862ce96",
+    "sha256": "cd9805734517537dcca7432d49ccc1ddf3583c13ca7c918747922d572ad04459",
     "mode": "0o644"
   },
   "launch.mjs": {
@@ -144,7 +144,7 @@
     "mode": "0o644"
   },
   "test_safety.mjs": {
-    "sha256": "6b66f0b9f6325be89f6db840138ede9c03b69ed3184534b3360b0bbec5d0aa28",
+    "sha256": "edd935cd016e21ffac7e41dedda27744d48603e33087429ac54618b19215abb2",
     "mode": "0o644"
   },
   "tests.mjs": {

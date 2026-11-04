@@ -75,7 +75,10 @@ staging directory before publishing a release. Command links are prepared before
 atomically switching `current`; exceptions remove newly created links and unique
 activation temporaries, preserving the old selection. Incomplete releases left by
 older installers are retained as `.incomplete-<id>` and rebuilt on rerun. Existing
-settings/auth are never overwritten. Existing unrelated command paths are refused.
+agent settings/auth are never overwritten. The separate UI preferences file
+`~/.pi/settings.json` receives `toolBackground: "transparent"` only when that key
+is absent; existing keys and explicit tool-background choices are preserved.
+This disables tool framing, not subagent viewer message separators. Existing unrelated command paths are refused.
 Existing global package declarations or autoloaded extensions are rejected with
 migration guidance, not silently disabled: back up and explicitly remove/migrate
 those declarations yourself. Project package declarations are also refused.
@@ -117,6 +120,8 @@ The allowlist is based on dev-VM settings, not the older general-machine list:
   consolidated public skills (replaces three overlapping skill-source groups);
   SimpleEnglish from public immutable sources. Licenses
   are retained with the downloaded repositories (MIT for these skill sources).
+- Managed model-first footer in both launchers, with stock usage accounting and
+  status rows; tested against Pi 1.5.0 at narrow and wide widths with dim colors.
 - Existing public palette themes. No private provider/model defaults, inherited
   trust, credentials, local run data, or absolute dev-VM paths.
 

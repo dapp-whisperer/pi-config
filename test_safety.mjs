@@ -7,7 +7,19 @@ import http from 'node:http';
 import {gzipSync} from 'node:zlib';
 import {unpack} from './archive.mjs';
 import {download} from './download.mjs';
-import {install,hash,publishRelease,activateRelease} from './install.mjs';
+import {install,hash,publishRelease,activateRelease,seedUiPreferences} from './install.mjs';
+test('UI transparent default uses plugin settings and preserves preferences',()=>temp(home=>{
+ const file=path.join(home,'.pi/settings.json');
+ seedUiPreferences(home);
+ assert.deepEqual(JSON.parse(fs.readFileSync(file)),{toolBackground:'transparent'});
+ fs.writeFileSync(file,JSON.stringify({theme:'dark',custom:{enabled:true}}));
+ seedUiPreferences(home);
+ assert.deepEqual(JSON.parse(fs.readFileSync(file)),{theme:'dark',custom:{enabled:true},toolBackground:'transparent'});
+ fs.writeFileSync(file,'{ "toolBackground": "outlines", "theme": "light" }');
+ const before=fs.readFileSync(file,'utf8');seedUiPreferences(home);
+ assert.equal(fs.readFileSync(file,'utf8'),before);
+ assert.equal(fs.existsSync(path.join(home,'.pi/agent/settings.json')),false);
+}));
 export function tar(entries) {const blocks=[]; for(const [name,type='0',value=''] of entries) {const h=Buffer.alloc(512);h.write(name);h.write('0000755\0',100);h.write((type==='0'?Buffer.byteLength(value):0).toString(8).padStart(11,'0')+'\0',124);h.fill(32,148,156);h.write(type,156);if(type==='2'||type==='1') h.write(value,157);h.write('ustar\0',257);h.write(h.reduce((a,b)=>a+b,0).toString(8).padStart(6,'0')+'\0 ',148);blocks.push(h);if(type==='0') {const b=Buffer.alloc(Math.ceil(Buffer.byteLength(value)/512)*512);b.write(value);blocks.push(b);}}return gzipSync(Buffer.concat([...blocks,Buffer.alloc(1024)]));}
 function temp(fn) {const root=fs.mkdtempSync(path.join(os.tmpdir(),'pi-safety-'));return Promise.resolve().then(()=>fn(root)).finally(()=>fs.rmSync(root,{recursive:true,force:true}));}
 test('archive rejects all prior traversal, hardlink, duplicate and unsupported regressions',()=>temp(root=>{
