@@ -1,11 +1,13 @@
 # Personal Pi bootstrap v1
 
 Standalone, public-only macOS/Linux bootstrap. No full dotfiles install, system
-Node replacement, credentials, private agents, project trust grants or VM instructions.
+Node replacement, credentials, private agents, project trust grants or system configuration changes.
 
 ## Install a reviewed release
 
-Requirements: Python 3.9+, HTTPS CA certificates, curl, patch, and about 1 GB free.
+Requirements: POSIX shell/core utilities, HTTPS CA certificates, curl, tar with gzip support,
+and sha256sum (Linux) or shasum (macOS), plus about 1 GB free.
+No Python, Git, system Node/npm, patch, sudo or system-package changes are required.
 Node is **not** a prerequisite. Linux x64/arm64 and macOS x64/arm64 Node archives
 have fixed SHA-256 checksums in `manifest.json`. No Windows support.
 
@@ -13,21 +15,23 @@ The publisher must substitute the reviewed **40-character commit SHA** and the
 SHA-256 of `https://codeload.github.com/dapp-whisperer/pi-config/tar.gz/COMMIT`:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/dapp-whisperer/pi-config/COMMIT/bootstrap.sh \
+curl --connect-timeout 30 --max-time 900 -fsSL https://raw.githubusercontent.com/dapp-whisperer/pi-config/COMMIT/bootstrap.sh \
   | sh -s -- COMMIT ARCHIVE_SHA256
 ```
 
 For the optional public HumanLayer installation, use:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/dapp-whisperer/pi-config/COMMIT/bootstrap.sh \
+curl --connect-timeout 30 --max-time 900 -fsSL https://raw.githubusercontent.com/dapp-whisperer/pi-config/COMMIT/bootstrap.sh \
   | sh -s -- --with-humanlayer COMMIT ARCHIVE_SHA256
 ```
 
-`bootstrap.sh --help` and `install.py --help` describe the option.
+`bootstrap.sh --help` and `node install.mjs --help` describe the option.
 No main/tag fetches occur during installation. Alternatively, review a checkout
-and run `python3 install.py` from the public export (or
-`python3 pi/bootstrap/install.py` from the canonical private checkout) (append `--with-humanlayer` to opt in). The initial immutable command can only
+and run `sh bootstrap.sh --checkout "$PWD"` from the public export (or
+`sh pi/bootstrap/bootstrap.sh --checkout "$PWD/pi/bootstrap"` from the canonical checkout).
+Put `--with-humanlayer` before `--checkout` to opt in. Checkout mode trusts the
+explicit local directory; it is not the public immutable-archive verification path. The initial immutable command can only
 be finalized after this source is committed; do not substitute `main`.
 
 Add `$HOME/.local/bin` to PATH. Run `pi-health`, then `pi` and `/login` (or set
@@ -46,7 +50,7 @@ Canonical source remains `pi/bootstrap/` in the private dotfiles checkout. Publi
 **only** the allowlisted export to the public `dapp-whisperer/pi-config` repository:
 
 ```sh
-python3 pi/bootstrap/export.py /path/to/new-empty-export-directory
+sh pi/bootstrap/bootstrap.sh --checkout "$PWD/pi/bootstrap" --export /path/to/new-empty-export-directory
 ```
 
 The export puts the installer at repository root. It copies an explicit file list,
@@ -151,7 +155,7 @@ All other direct extension versions match the live lock. Initial audit: 5 findin
 (3 high/2 moderate). Final `npm audit --omit=dev`: **0 findings**. Registry audit
 is not a comprehensive code or bundled-dependency security audit.
 
-The ask-user overlay patch applies with zero fuzz. Startup update guards require
+The ask-user overlay uses exact guarded JavaScript replacements; mismatched input fails closed. Startup update guards require
 exactly four compatible call sites across bundled and SDK builds and parse-check
 patched JS. Incompatibility fails before activation. Node downloads use the
 published Node SHA-256 list captured in the manifest; npm uses SHA-512 integrity;
@@ -164,12 +168,12 @@ integrity, not against a malicious upstream release author.
 
 ```sh
 # Canonical checkout (public export: omit pi/bootstrap/ and cd into export root)
-python3 pi/bootstrap/tests.py
+sh pi/bootstrap/bootstrap.sh --checkout "$PWD/pi/bootstrap" --test
 cd pi/bootstrap && npm audit --omit=dev
 ```
 
-Tests create/delete only temporary HOME directories, with PATH containing patch
-but **no system Node**, and no inherited provider credentials. Opt-in RPC tests additionally deny Node
+Tests create/delete only temporary HOME directories, with PATH containing only baseline shell/core utilities, curl, tar and checksum tools,
+but **no Python, Git, system Node/npm or patch**, and no inherited provider credentials. Opt-in RPC tests additionally deny Node
 network connection APIs, independently of PI_OFFLINE. Real downloads and
 npm ci, offline credential-free RPC command/resource discovery in both launchers,
 HumanLayer isolation, core-only absence and add-later/selection retention, real
@@ -179,7 +183,28 @@ native zigpty PTY output/exit without model calls, archive attack rejection, inj
 inventory/link/activation failure recovery, installed-file
 tamper detection, config/auth preservation, conflict
 refusal, same-release rerun and health checks are exercised. No model requests.
-Linux x64 passed locally. macOS and other architectures require CI/device results;
+Linux x64 passed locally and in a disposable Debian 12 (bookworm) curl-baseline
+container, including the restricted-PATH bootstrap. These are not Qubes tests. macOS and other architectures require CI/device results;
 the CI matrix is configured, not evidence of a pass. Interactive Pi UI and actual provider, browser, interactive-shell tool sessions,
 or HumanLayer cloud workflows are not tested; the native PTY test is a local shell
 smoke, not an end-to-end model-directed tool invocation.
+
+## Debian Qubes AppVM deployment
+
+All durable releases and command links live under HOME (`~/.local/share/personal-pi`
+and `~/.local/bin`); preferences/auth stay in `~/.pi/agent`. In a normal Qubes
+AppVM these user-home paths persist across restarts. Bootstrap temporary downloads
+are disposable; no runtime depends on /tmp. No dom0, TemplateVM, root filesystem,
+sudo or apt changes are performed. Required baseline tools must already be present.
+Actual Qubes restart behavior requires testing in a Qubes environment; ordinary
+Debian/Linux tests are not evidence of that integration.
+
+The canonical Node pins are in `manifest.json`. After updating them or the safe
+extractor, run `node pi/bootstrap/generate-bootstrap.mjs`; tests reject stale
+generated shell pins/extractor. The shell verifies the pinned Node archive before
+standard tar extracts it into an empty temporary directory with ownership and
+permission restoration disabled. Verified source archives then use the embedded
+Node extractor in regular-file-only mode. Installer archives use the same parser
+with validated in-tree symlinks. Downloads have 30-second idle/connect and
+900-second overall bounds, including slow-drip responses. npm lifecycle scripts
+remain disabled; npm's own retry/timeout policy is separate from archive deadlines.

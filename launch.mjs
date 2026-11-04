@@ -36,7 +36,7 @@ if(input[0]==='config') {
  console.log(`Managed resources are selected by this immutable release, not Pi's package configuration screen. Edit ordinary preferences in ${path.join(home,'settings.json')}. To change packages/resources, review and install a new bootstrap release. Use pi list to inspect the managed inventory.`);
  process.exit(0);
 }
-const args=[];
+const args=['-e',path.join(source,'resources/model-first-footer.ts')];
 if(mode==='pih' && !passthrough) console.error('HumanLayer workflow preflight: private-derived RPI agent definitions are not distributed. RPI phases requiring codebase-locator, codebase-analyzer, codebase-pattern-finder, web-search-researcher, implementer-agent, outline-implementer-agent or implementation-reviewer are unavailable in this public-only release. Mirroring and public skills load; workflows referencing those agents cannot run unchanged.');
 for(const name of Object.keys(deps)) if(name!=='@earendil-works/pi-coding-agent') args.push('-e',path.join(source,'node_modules',name));
 for(const item of manifest.sources){

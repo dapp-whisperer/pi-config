@@ -1,0 +1,51 @@
+// Parse verified tar.gz data before writing anything; never delegate link handling to tar.
+import fs from 'node:fs';
+import path from 'node:path';
+import {gunzipSync} from 'node:zlib';
+export function unpack(archive, dest, {regularOnly=false}={}) {
+ if(fs.readdirSync(dest).length) throw Error('Extraction destination must be empty');
+ const data=gunzipSync(fs.readFileSync(archive)), entries=new Map();
+ const text=b=>b.toString('utf8').split('\0')[0];
+ const number=b=>{const s=text(b).trim(); if(!/^[0-7]*$/.test(s)) throw Error('Unsupported tar number'); return parseInt(s||'0',8);};
+ let pax={};
+ for(let offset=0;offset+512<=data.length;) {
+  const h=data.subarray(offset,offset+512); offset+=512;
+  if(h.every(x=>x===0)) break;
+  const sum=h.reduce((n,x,i)=>n+(i>=148&&i<156?32:x),0);
+  if(sum!==number(h.subarray(148,156))) throw Error('Invalid tar checksum');
+  const size=number(h.subarray(124,136));
+  if(!Number.isSafeInteger(size)||offset+size>data.length) throw Error('Truncated tar');
+  const body=data.subarray(offset,offset+size); offset+=Math.ceil(size/512)*512;
+  const type=text(h.subarray(156,157));
+  if(type==='L'||type==='K') {pax[type==='L'?'path':'linkpath']=text(body); continue;}
+  if(type==='x'||type==='g') {
+   const attrs={}; let at=0;
+   while(at<body.length) {const space=body.indexOf(32,at); const len=Number(body.subarray(at,space).toString()); if(space<at||!Number.isSafeInteger(len)||len<=space-at+1||at+len>body.length) throw Error('Invalid pax'); const record=body.subarray(space+1,at+len-1).toString(); const eq=record.indexOf('='); attrs[record.slice(0,eq)]=record.slice(eq+1); at+=len;}
+   if(type==='g') {if(Object.keys(attrs).some(k=>!['comment','mtime','atime','ctime'].includes(k))) throw Error('Unsupported global pax');}
+   else pax=attrs;
+   continue;
+  }
+  const prefix=text(h.subarray(345,500));
+  const raw=pax.path??(prefix?prefix+'/':'')+text(h.subarray(0,100));
+  const link=pax.linkpath??text(h.subarray(157,257)); pax={};
+  if(raw.startsWith('/')||raw.split('/').includes('..')) throw Error('Unsafe archive path');
+  const name=path.posix.normalize(raw).replace(/\/$/,'');
+  if(!name||name==='.'||entries.has(name)||!['','0','5','2'].includes(type)||(regularOnly&&type==='2')) throw Error('Unsafe or duplicate archive entry: '+name+' type '+type);
+  entries.set(name,{type,link,body,mode:number(h.subarray(100,108))&0o777});
+ }
+ const roots=new Set([...entries.keys()].map(n=>n.split('/')[0]));
+ if(roots.size!==1) throw Error('Archive must have exactly one root');
+ const links=new Set([...entries].filter(([,e])=>e.type==='2').map(([n])=>n));
+ for(const [name,e] of entries) {
+  const parts=name.split('/'); parts.pop();
+  for(let i=1;i<=parts.length;i++) if(links.has(parts.slice(0,i).join('/'))) throw Error('Archive traverses link');
+  if(e.type==='2') {
+   if(e.link.startsWith('/')) throw Error('Unsafe archive symlink');
+   for(const c of e.link.split('/')) {if(c==='..') {if(parts.length<=1) throw Error('Unsafe archive symlink'); parts.pop();} else if(c&&c!=='.') parts.push(c); if(links.has(parts.join('/'))) throw Error('Unsafe archive symlink');}
+   if(!entries.has(parts.join('/'))) throw Error('Dangling archive symlink');
+  }
+ }
+ for(const [name,e] of entries) {const target=path.join(dest,name); if(e.type==='5') fs.mkdirSync(target,{recursive:true}); else if(e.type!=='2') {fs.mkdirSync(path.dirname(target),{recursive:true}); fs.writeFileSync(target,e.body,{flag:'wx',mode:e.mode});}}
+ for(const [name,e] of entries) if(e.type==='2') {const target=path.join(dest,name);fs.mkdirSync(path.dirname(target),{recursive:true});fs.symlinkSync(e.link,target);}
+ return path.join(dest,[...roots][0]);
+}

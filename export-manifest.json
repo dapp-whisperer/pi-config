@@ -1,134 +1,154 @@
 {
   ".gitignore": {
-    "mode": "0o644",
-    "sha256": "de46ca71b20bf7dbc2df3669aeb780a0418229975f51cfc30d72bf4bbd0f88ec"
+    "sha256": "de46ca71b20bf7dbc2df3669aeb780a0418229975f51cfc30d72bf4bbd0f88ec",
+    "mode": "0o644"
   },
   "README.md": {
-    "mode": "0o644",
-    "sha256": "eb72f8ddb5dc56a408354696beffc5a2e6971097ca72f2830ba98293d92bc625"
+    "sha256": "981ad3a26da74065ea71ee963a48a57ea812f0b7e4e4e5bae4961b9651bd628d",
+    "mode": "0o644"
+  },
+  "archive.mjs": {
+    "sha256": "5cd80929c31a986559e3ae753f12e982990c3e0ae0be4dc4570d9bce61f6f8c2",
+    "mode": "0o644"
   },
   "bootstrap.sh": {
-    "mode": "0o755",
-    "sha256": "06fc151511e59172d742106bdb43c7c204867635b5672b098200d2055d25c76c"
+    "sha256": "04466b90402edb68dd530b04f10e139dc82588f5b22467e940b5e28e15da6975",
+    "mode": "0o755"
   },
   "defaults.json": {
-    "mode": "0o644",
-    "sha256": "4094dc80ffebf133cddd2ac8f963e35af2d452a92396860a73ab870dc6aa7e87"
+    "sha256": "4094dc80ffebf133cddd2ac8f963e35af2d452a92396860a73ab870dc6aa7e87",
+    "mode": "0o644"
   },
-  "export.py": {
-    "mode": "0o644",
-    "sha256": "9c7f9974d8af7f143cc60adc7e6249ad239958c1cd55d5da19426d6e92e19db3"
+  "download.mjs": {
+    "sha256": "1fd2a61b2da7ae9cc7a3a016b1ab803b0731e657af5c8f32e2e37746e15ac221",
+    "mode": "0o644"
   },
-  "install.py": {
-    "mode": "0o644",
-    "sha256": "2e161acb35815eada1f19760dc356e0a9171b668d2a9ec15aa671d3e46e2209b"
+  "export.mjs": {
+    "sha256": "120b333f963b94d3cedb554fcb515ae6263b9d2e5b7ec9b3edc595ae4751ec65",
+    "mode": "0o644"
+  },
+  "generate-bootstrap.mjs": {
+    "sha256": "1f4d4d53d38bc3bfbf159e6494d4d957a032909645f5995446d50f082178c56c",
+    "mode": "0o644"
+  },
+  "install.mjs": {
+    "sha256": "14fbc652f7f17aad6d055037fb7dd54131aeb80b132751c92cd28a994862ce96",
+    "mode": "0o644"
   },
   "launch.mjs": {
-    "mode": "0o644",
-    "sha256": "a9d29a073216ba7b91e0a1d86dfc0cf50892a3bb3789362c8b73ccb298b9f68f"
+    "sha256": "6f4c142c8e7f1dad91516ae6d5bea9d881d03a871404cc6ebd4b473f26b7d234",
+    "mode": "0o644"
   },
   "manifest.json": {
-    "mode": "0o644",
-    "sha256": "0bff9dba593e37f9decefe1d4c185e6196972931efdea66991de2eeb589aed43"
+    "sha256": "0bff9dba593e37f9decefe1d4c185e6196972931efdea66991de2eeb589aed43",
+    "mode": "0o644"
   },
   "package-lock.json": {
-    "mode": "0o644",
-    "sha256": "544eb0d3a76f782eac5ed67c981bbb3ff128d8d0c6e6e07b4f9a0c87c03e86e5"
+    "sha256": "544eb0d3a76f782eac5ed67c981bbb3ff128d8d0c6e6e07b4f9a0c87c03e86e5",
+    "mode": "0o644"
   },
   "package.json": {
-    "mode": "0o644",
-    "sha256": "a438169c503a0d0e133f74a2a2c3b81080f5d11f4ec06b1cf58fb70dec52f617"
+    "sha256": "a438169c503a0d0e133f74a2a2c3b81080f5d11f4ec06b1cf58fb70dec52f617",
+    "mode": "0o644"
   },
   "patch.mjs": {
-    "mode": "0o644",
-    "sha256": "1b81ba70ea4b14dc8fbc24d5e167034e6535aa9f820abd576e26bd15fb2d7568"
-  },
-  "patches/pi-ask-user-bottom-dock.patch": {
-    "mode": "0o644",
-    "sha256": "fbbf4bf057cc9ccff7dc59ecfcf6bb44e64251fa4fe38286a499c4c40673d8d2"
+    "sha256": "37e9cd4e09e88d728be41ee6cb9e1778872d48cacfbfb4716b2625efe4013938",
+    "mode": "0o644"
   },
   "resources/humanlayer-auto-advance.ts": {
-    "mode": "0o644",
-    "sha256": "320cb5a51231628822f6c19bdb4f4b0ac5b4a80cbbf59d6ce5bdb642b843cd56"
+    "sha256": "cfecbd891bd7597b2a2ca1c7c9a81c201128a9874fcf788637959dae99b17901",
+    "mode": "0o644"
+  },
+  "resources/model-first-footer.ts": {
+    "sha256": "891e957771d03ed31e5f56ad3b3e31160409805d59e336775f487be2f823081b",
+    "mode": "0o644"
   },
   "resources/themes/ayu-dark-palette.json": {
-    "mode": "0o644",
-    "sha256": "fd5523de66aeabd8593245d85b984730d24a202b5fa02a4b95fe8b6490cd5d18"
+    "sha256": "fd5523de66aeabd8593245d85b984730d24a202b5fa02a4b95fe8b6490cd5d18",
+    "mode": "0o644"
   },
   "resources/themes/ayu-mirage-dotfiles.json": {
-    "mode": "0o644",
-    "sha256": "3d345863d697800ee7f36daee4b448dcefa7333d9756190a7dc7c49f82c3a3b1"
+    "sha256": "3d345863d697800ee7f36daee4b448dcefa7333d9756190a7dc7c49f82c3a3b1",
+    "mode": "0o644"
   },
   "resources/themes/catppuccin-frappe-mauve.json": {
-    "mode": "0o644",
-    "sha256": "15e5ff942d7d7d916606c7336e371e68bc4b74729278bba91ff0f239eaee1320"
+    "sha256": "15e5ff942d7d7d916606c7336e371e68bc4b74729278bba91ff0f239eaee1320",
+    "mode": "0o644"
   },
   "resources/themes/catppuccin-latte-mauve.json": {
-    "mode": "0o644",
-    "sha256": "2ab4e404aa5c84f614a98137eccdf868dcc26bdebfd8277137553e264f0195a6"
+    "sha256": "2ab4e404aa5c84f614a98137eccdf868dcc26bdebfd8277137553e264f0195a6",
+    "mode": "0o644"
   },
   "resources/themes/catppuccin-macchiato-mauve.json": {
-    "mode": "0o644",
-    "sha256": "eb8321fcd4da4e327a947d5f48fe92275062a5ddfd088c8c6592a4b0cbddb560"
+    "sha256": "eb8321fcd4da4e327a947d5f48fe92275062a5ddfd088c8c6592a4b0cbddb560",
+    "mode": "0o644"
   },
   "resources/themes/catppuccin-mocha-mauve.json": {
-    "mode": "0o644",
-    "sha256": "e21305bcae27f2a2e604090805166faa275e62b5dd323e2f1f1b85c3923ad473"
+    "sha256": "e21305bcae27f2a2e604090805166faa275e62b5dd323e2f1f1b85c3923ad473",
+    "mode": "0o644"
   },
   "resources/themes/duskfox-palette.json": {
-    "mode": "0o644",
-    "sha256": "4a66193c4f0db1c5eda8a342b1c5b226b1a5b4bfba925df137612066953b52ea"
+    "sha256": "4a66193c4f0db1c5eda8a342b1c5b226b1a5b4bfba925df137612066953b52ea",
+    "mode": "0o644"
   },
   "resources/themes/flexoki-dark-palette.json": {
-    "mode": "0o644",
-    "sha256": "61c7754ff107fa78bae9ef2c5ab04e881fefeb47329c8ac7981cacffaa19b576"
+    "sha256": "61c7754ff107fa78bae9ef2c5ab04e881fefeb47329c8ac7981cacffaa19b576",
+    "mode": "0o644"
   },
   "resources/themes/gruvbox-dark-palette.json": {
-    "mode": "0o644",
-    "sha256": "5ff4089e145b68b98d659b7ced8471e1778162cbf8ce53c6b42bb17a8611cda5"
+    "sha256": "5ff4089e145b68b98d659b7ced8471e1778162cbf8ce53c6b42bb17a8611cda5",
+    "mode": "0o644"
   },
   "resources/themes/kanagawa-wave-palette.json": {
-    "mode": "0o644",
-    "sha256": "7706d3dc464763526937e6786661134a51bb0b1a18624e11bc3257b34da88ed6"
+    "sha256": "7706d3dc464763526937e6786661134a51bb0b1a18624e11bc3257b34da88ed6",
+    "mode": "0o644"
   },
   "resources/themes/monokai-palette.json": {
-    "mode": "0o644",
-    "sha256": "e855f8f77c41831dfc4e591a901ec8a5ff16c668a5e7adc8713f9b87ea4ccf28"
+    "sha256": "e855f8f77c41831dfc4e591a901ec8a5ff16c668a5e7adc8713f9b87ea4ccf28",
+    "mode": "0o644"
   },
   "resources/themes/ocean-dark-palette.json": {
-    "mode": "0o644",
-    "sha256": "231cd43e53bcd7c5ef5f52e4fc3426ae3b7fe802cef57dc9ac7da9bc92c331e4"
+    "sha256": "231cd43e53bcd7c5ef5f52e4fc3426ae3b7fe802cef57dc9ac7da9bc92c331e4",
+    "mode": "0o644"
   },
   "resources/themes/one-dark-palette.json": {
-    "mode": "0o644",
-    "sha256": "4c0e001faa8473a1bd16ecce25b49f6eba6c2fd5421a8186f301d423c80f268f"
+    "sha256": "4c0e001faa8473a1bd16ecce25b49f6eba6c2fd5421a8186f301d423c80f268f",
+    "mode": "0o644"
   },
   "resources/themes/solarized-dark-dotfiles.json": {
-    "mode": "0o644",
-    "sha256": "ad93d82f445c5830436d0956e21a013769c599fffc194b464b5712dd454b8258"
+    "sha256": "ad93d82f445c5830436d0956e21a013769c599fffc194b464b5712dd454b8258",
+    "mode": "0o644"
   },
   "resources/themes/solarized-light-dotfiles.json": {
-    "mode": "0o644",
-    "sha256": "ae001c2a886b49896cb597a18bf0b2c62cf4e8a1898a431e5b5fe598c6427406"
+    "sha256": "ae001c2a886b49896cb597a18bf0b2c62cf4e8a1898a431e5b5fe598c6427406",
+    "mode": "0o644"
   },
   "resources/themes/tokyonight-night-palette.json": {
-    "mode": "0o644",
-    "sha256": "566513f9fceb619360c0bbcb7f7f848c8433a9519e88cc489f97963569816023"
+    "sha256": "566513f9fceb619360c0bbcb7f7f848c8433a9519e88cc489f97963569816023",
+    "mode": "0o644"
   },
   "resources/themes/tomorrow-night-bright-palette.json": {
-    "mode": "0o644",
-    "sha256": "f54216e44c69a0e3fc9f0cea63beb7f1001066e4f1eedf1b42466b8f23a3e583"
+    "sha256": "f54216e44c69a0e3fc9f0cea63beb7f1001066e4f1eedf1b42466b8f23a3e583",
+    "mode": "0o644"
+  },
+  "test_humanlayer_auto_advance.mjs": {
+    "sha256": "362aa682ed286380b16bf1375ad13a6ea5d4f432ade43089fb9d2843ff77e19c",
+    "mode": "0o644"
   },
   "test_runtime.mjs": {
-    "mode": "0o644",
-    "sha256": "f25a0b29bfd20b0f794b80ed09a997c605096fc9660344dcb14c458fdc8a487b"
+    "sha256": "be019144d5dbb11f215880de2115184331763d2ed7580379458d4c6721abc16b",
+    "mode": "0o644"
   },
-  "test_safety.py": {
-    "mode": "0o644",
-    "sha256": "9df685c4c25d631bb0eeb80a73d482d732dcd133fdd91a38d445a6212b24ac0e"
+  "test_footer.mjs": {
+    "sha256": "52ee7c2b095ebad870f988d284b07624c7dca124275d9874ed77b083788da9f5",
+    "mode": "0o644"
   },
-  "tests.py": {
-    "mode": "0o644",
-    "sha256": "bf974f1557c292f7435069740311f3530654844240fb5221bdb34c14014e275c"
+  "test_safety.mjs": {
+    "sha256": "6b66f0b9f6325be89f6db840138ede9c03b69ed3184534b3360b0bbec5d0aa28",
+    "mode": "0o644"
+  },
+  "tests.mjs": {
+    "sha256": "ce22ed7fc26f9e8a742f73bf707084addd0fd8c25ac9b48eec23ab0f1619426f",
+    "mode": "0o644"
   }
 }

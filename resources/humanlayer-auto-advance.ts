@@ -368,6 +368,7 @@ export default function humanlayerAutoAdvance(pi: ExtensionAPI) {
 			timer: setTimeout(() => {
 				pending = null;
 				refreshStatus(ctx);
+				if (!config.enabled || !config.allow.includes(skill)) return;
 				launch(ctx, skill, args);
 			}, config.delayMs),
 		};
@@ -415,6 +416,7 @@ export default function humanlayerAutoAdvance(pi: ExtensionAPI) {
 				case "deny":
 					if (!arg) break;
 					config.allow = config.allow.filter((s) => s !== arg);
+					if (pending?.skill === arg) cancelPending(ctx);
 					saveConfig(config);
 					break;
 				case "delay": {
@@ -439,6 +441,7 @@ export default function humanlayerAutoAdvance(pi: ExtensionAPI) {
 					cancelPending(ctx, "skipped");
 					return;
 				case "reset":
+					cancelPending(ctx);
 					config = defaultConfig();
 					saveConfig(config);
 					break;

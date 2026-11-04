@@ -24,6 +24,7 @@ const deps=JSON.parse(fs.readFileSync(path.join(source,'package.json'))).depende
 const manifest=JSON.parse(fs.readFileSync(path.join(source,'manifest.json')));
 for(const humanlayer of [false,true]) {
  const extensions=Object.keys(deps).filter(n=>n!=='@earendil-works/pi-coding-agent').map(n=>path.join(source,'node_modules',n));
+ extensions.push(path.join(source,'resources/model-first-footer.ts'));
  const skills=[];
  for(const item of manifest.sources) {
   const parent=path.join(release,'upstream',item.repo.replace('/','-'));
