@@ -168,6 +168,26 @@ hardlinks, duplicate normalized paths and unsupported types, writes ordinary fil
 first, and creates only validated in-tree symlinks last (including Node npm links). This protects artifact
 integrity, not against a malicious upstream release author.
 
+## Patch maintenance
+
+Shared patches and their tests belong in this repository, not a private export or
+consumer patch directory. Patch both maintained source and the shipped entrypoint.
+Guard the upstream version and exact anchors; reject unknown or partial layouts
+before writing any target. Reapplying a patch must not duplicate its changes.
+Provide a dry-run path and regression tests for guards and shipped behavior.
+
+The goal patch supports `@narumitw/pi-goal` 0.54.13. It posts a visible completion
+summary without triggering another turn. Completion guards and termination remain
+unchanged. Collapsing the tool must leave that summary visible. Before release,
+check the live TUI and stable idle usage as well as automated handler tests.
+Record visual evidence with the release validation results.
+
+After an upstream update, review both targets, adapt guards, run tests, and capture
+new visual evidence. Do not bypass a failed guard. Install patches in staging before
+activation. Publish an immutable release commit and archive checksum; update the
+consumer pin in a separate commit to avoid a self-referential archive hash.
+Consumers must not restore obsolete private patch sources.
+
 ## Validation
 
 ```sh
