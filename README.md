@@ -26,11 +26,11 @@ requires an explicit commit and checksum.
 
 ### Pinned release (no Git required)
 
-This immutable command installs reviewed release v1.1.0 (no placeholders to replace):
+This immutable command installs reviewed release v1.1.2 (no placeholders to replace):
 
 ```sh
-curl --connect-timeout 30 --max-time 900 -fsSL https://raw.githubusercontent.com/dapp-whisperer/pi-config/6a74e5eda42fed727dcee593826537ed105d3c0a/bootstrap.sh \
-  | sh -s -- 6a74e5eda42fed727dcee593826537ed105d3c0a 55b0173f27375d801475de485194c8e9f462febdf8e48dfe80f16e2024539b04
+curl --connect-timeout 30 --max-time 900 -fsSL https://raw.githubusercontent.com/dapp-whisperer/pi-config/41c6eaad7e8ed2b579e8bc04cbd79204d2818673/bootstrap.sh \
+  | sh -s -- 41c6eaad7e8ed2b579e8bc04cbd79204d2818673 6221721ee5985e6d1163c1bfbf4f26019ce8b4f1aee017f1bbc155928375056f
 ```
 
 For optional public HumanLayer, insert `--with-humanlayer` after `sh -s --`.
