@@ -24,3 +24,14 @@ test('checkout entrypoints resolve their own directory before download; explicit
  assert.equal(r.status,2);assert.match(r.stderr,/Unsupported platform/);
  } finally {fs.rmSync(root,{recursive:true,force:true});}
 });
+
+await test('clean status colors and named skill menu', async()=>{
+ const {status,skillMenu}=await import('./install.mjs');
+ for(const [isTTY,env,color] of [[true,{TERM:'xterm'},true],[false,{TERM:'xterm'},false],[true,{TERM:'dumb'},false],[true,{TERM:'xterm',NO_COLOR:''},false]]) {
+  let output=''; status('Ready',{isTTY,write:s=>output+=s},env);
+  assert.equal(output.includes('\x1b['),color);
+  assert.ok(output.endsWith(' Ready\n'));
+ }
+ for(const name of ['Compound Engineering','Firecrawl','Matt Pocock']) assert.ok(skillMenu.includes(name));
+ assert.ok(skillMenu.endsWith('[compound,firecrawl]: '));
+});

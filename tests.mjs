@@ -16,7 +16,7 @@ test('skill pack selection validates and normalizes',()=>{
 test('complete Python-free bootstrap and offline runtime preservation', {timeout:900000},async()=>{
  const home=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'pi-e2e-'))),tools=path.join(home,'tools');fs.mkdirSync(tools);
  // No Python, Git, system Node/npm, patch, or user credential environment.
- for(const name of ['sh','uname','mktemp','mkdir','rm','tar','gzip','curl','sha256sum','shasum']) {const found=spawnSync('/bin/sh',['-c',`command -v ${name}`],{encoding:'utf8'}).stdout.trim();if(found) fs.symlinkSync(found,path.join(tools,name));}
+ for(const name of ['sleep','sh','uname','mktemp','mkdir','rm','tar','gzip','curl','sha256sum','shasum']) {const found=spawnSync('/bin/sh',['-c',`command -v ${name}`],{encoding:'utf8'}).stdout.trim();if(found) fs.symlinkSync(found,path.join(tools,name));}
  const env={HOME:home,PATH:tools,PI_OFFLINE:'1',HUMANLAYER_PI_DISABLE:'1'};
  const run=(command,args=[],ok=true,extra={})=>{const r=spawnSync(command,args,{env,cwd:home,encoding:'utf8',timeout:240000,...extra});assert.equal(r.status===0,ok,`${command} ${args}\n${r.stdout}\n${r.stderr}\n${r.error??''}`);return r;};
  try {

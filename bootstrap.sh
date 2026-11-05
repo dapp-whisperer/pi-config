@@ -49,17 +49,45 @@ verify() {
  actual=${actual%% *}; [ "$actual" = "$2" ] || { echo 'Checksum mismatch' >&2; exit 1; }
 }
 tmp=$(mktemp -d)
-trap 'rm -rf "$tmp"' EXIT HUP INT TERM
-echo '[bootstrap] Downloading pinned Node runtime (bounded to 900 seconds)' >&2
-curl --connect-timeout 30 --max-time 900 --fail --progress-bar --show-error --location --proto '=https' --tlsv1.2 "https://nodejs.org/dist/v24.15.0/node-v24.15.0-$platform-$arch.tar.gz" -o "$tmp/node.tgz"
-echo '[bootstrap] Verifying and extracting Node runtime' >&2
+worker= heartbeat=
+cleanup() {
+ [ -z "$worker" ] || { kill "$worker" 2>/dev/null || :; wait "$worker" 2>/dev/null || :; }
+ [ -z "$heartbeat" ] || { kill "$heartbeat" 2>/dev/null || :; wait "$heartbeat" 2>/dev/null || :; }
+ rm -rf "$tmp"
+}
+trap cleanup 0
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+status() {
+ if [ -t 2 ] && [ "${TERM:-dumb}" != dumb ] && [ "${NO_COLOR+x}" != x ]; then
+  printf '\033[36m[bootstrap]\033[0m %s\n' "$*" >&2
+ else printf '[bootstrap] %s\n' "$*" >&2; fi
+}
+fetch() {
+ curl --connect-timeout 30 --max-time 900 --fail --silent --show-error --location --proto '=https' --tlsv1.2 "$1" -o "$2" &
+ worker=$!
+ (while :; do sleep 15 || exit; status 'Download still running'; done) &
+ heartbeat=$!
+ result=0
+ wait "$worker" || result=$?
+ worker=
+ kill "$heartbeat" 2>/dev/null || :
+ wait "$heartbeat" 2>/dev/null || :
+ heartbeat=
+ return "$result"
+}
+status 'Downloading pinned Node runtime (bounded to 900 seconds)'
+fetch "https://nodejs.org/dist/v24.15.0/node-v24.15.0-$platform-$arch.tar.gz" "$tmp/node.tgz"
+status 'Verifying and extracting Node runtime'
 verify "$tmp/node.tgz" "$digest"
 # Only the exact publisher-pinned Node archive reaches system tar, in an empty directory.
 mkdir "$tmp/runtime"
 tar -xzf "$tmp/node.tgz" -C "$tmp/runtime" --no-same-owner --no-same-permissions
 node="$tmp/runtime/node-v24.15.0-$platform-$arch/bin/node"
 if [ -z "$checkout" ]; then
- curl --connect-timeout 30 --max-time 900 --fail --progress-bar --show-error --location --proto '=https' --tlsv1.2 "https://codeload.github.com/dapp-whisperer/pi-config/tar.gz/$commit" -o "$tmp/source.tgz"
+ status 'Downloading pinned installer source'
+ fetch "https://codeload.github.com/dapp-whisperer/pi-config/tar.gz/$commit" "$tmp/source.tgz"
  verify "$tmp/source.tgz" "$checksum"
  mkdir "$tmp/source"
  "$node" --input-type=module - "$tmp/source.tgz" "$tmp/source" <<'JS'

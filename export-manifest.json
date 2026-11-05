@@ -4,7 +4,7 @@
     "mode": "0o644"
   },
   "README.md": {
-    "sha256": "db9fe1613e64987272c0de3c62fc57f2018643c6b7f41fbf1968f08a92dd73b9",
+    "sha256": "f7e1fce9c0c77db2f2c63c8e8db9f4eb2c9d0d0f7a1d7f95609eb03fadce27a0",
     "mode": "0o644"
   },
   "archive.mjs": {
@@ -12,7 +12,7 @@
     "mode": "0o644"
   },
   "bootstrap.sh": {
-    "sha256": "813a1db44f66878b2b34b58f3462933ea4d2f00d220557258f6adfbf198ef587",
+    "sha256": "a5d6dd53c3757b9d422b3fbb85f760cdf46bba72cb1ac5163752877cec628ff7",
     "mode": "0o755"
   },
   "defaults.json": {
@@ -28,11 +28,11 @@
     "mode": "0o644"
   },
   "generate-bootstrap.mjs": {
-    "sha256": "fc41f4e18197e7d0323e47326647734935b41b5b6cc007869b5080592bee027b",
+    "sha256": "b06100616cab9afe319acf531b8afd518cdf7dc367e1b402f8d0216362568fba",
     "mode": "0o644"
   },
   "install.mjs": {
-    "sha256": "1f9935c71f95f3785dced8206069074d6dea19c8d4cc619fb8a4baa57e5e2e4d",
+    "sha256": "eb1497e74ea607abaf149f892f6d5623cc1160f338261230b71935d04c6991e4",
     "mode": "0o644"
   },
   "launch.mjs": {
@@ -148,11 +148,11 @@
     "mode": "0o644"
   },
   "test_first_run.mjs": {
-    "sha256": "13788e23f295085890e577908595e3152689cdc05e6876aa37387a83f354708c",
+    "sha256": "33e220d367e915c87fef44986668c353312cc64dd115a9e5e67147782d1b1ccf",
     "mode": "0o644"
   },
   "tests.mjs": {
-    "sha256": "58a39be7ab158470d14b73edf4b3c12d859ef37859c145e345a436932a7470d6",
+    "sha256": "d986587b5b5fca43324754fc39ac0d9fde2807f28a69e30c45c111349c7c2f6d",
     "mode": "0o644"
   }
 }

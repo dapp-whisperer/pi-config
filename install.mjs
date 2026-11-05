@@ -25,6 +25,11 @@ export function seedUiPreferences(home) {
  fs.mkdirSync(path.dirname(file),{recursive:true});
  fs.writeFileSync(file,JSON.stringify(prefs,null,2)+'\n',{mode:0o600});
 }
+export function status(message, stream=process.stderr, env=process.env) {
+ const label=stream.isTTY&&env.TERM!=='dumb'&&!Object.hasOwn(env,'NO_COLOR')?'\x1b[36m[install]\x1b[0m':'[install]';
+ stream.write(label+' '+message+'\n');
+}
+export const skillMenu='Skill packs (comma-separated names, all, or none):\n  compound     Compound Engineering (default)\n  firecrawl    Firecrawl (default)\n  matt-pocock  Matt Pocock\n[compound,firecrawl]: ';
 export const packs=['compound','firecrawl','matt-pocock'];
 export function parsePacks(value) {
  const selected=value==='all'?packs:value==='none'?[]:value.split(',');
@@ -32,7 +37,7 @@ export function parsePacks(value) {
  return [...new Set(selected)].sort();
 }
 export async function install({home=os.homedir(),humanlayer=false,skillPacks,fetch=download}={}) {
- console.error('[install] Checking installation and selected skills');
+ status('Checking installation and selected skills');
  const root=path.join(home,'.local/share/personal-pi'), current=path.join(root,'current'), bindir=path.join(home,'.local/bin');
  const previous=path.join(current,'options.json'); humanlayer ||= fs.existsSync(previous)&&JSON.parse(fs.readFileSync(previous)).humanlayer;
  const prior=fs.existsSync(previous)?JSON.parse(fs.readFileSync(previous)):{};
@@ -57,26 +62,26 @@ export async function install({home=os.homedir(),humanlayer=false,skillPacks,fet
    if(!humanlayer) fs.unlinkSync(path.join(src,'resources/humanlayer-auto-advance.ts'));
    const archive=path.join(stage,'archive.tgz'), extract=path.join(stage,'extract');
    const key=process.platform+'-'+process.arch;
-   console.error('[install] Downloading pinned Node runtime');
+   status('Downloading pinned Node runtime');
    await fetch(`https://nodejs.org/dist/v${manifest.nodeVersion}/node-v${manifest.nodeVersion}-${key}.tar.gz`,manifest.node[key],archive);
    fs.mkdirSync(extract); fs.renameSync(unpack(archive,extract),path.join(stage,'node')); fs.rmdirSync(extract); fs.unlinkSync(archive);
-   const env={...process.env,HOME:home,PATH:path.join(stage,'node/bin')+path.delimiter+(process.env.PATH??''),npm_config_update_notifier:'false',npm_config_cache:path.join(stage,'npm-cache'),npm_config_userconfig:'/dev/null',npm_config_globalconfig:path.join(stage,'empty-npmrc')};
+   const env={...process.env,HOME:home,PATH:path.join(stage,'node/bin')+path.delimiter+(process.env.PATH??''),npm_config_progress:'false',npm_config_color:'false',npm_config_update_notifier:'false',npm_config_cache:path.join(stage,'npm-cache'),npm_config_userconfig:'/dev/null',npm_config_globalconfig:path.join(stage,'empty-npmrc')};
    const node=path.join(stage,'node/bin/node');
-   console.error('[install] Installing locked npm dependencies');
+   status('Installing locked npm dependencies');
    await new Promise((resolve,reject)=>{
     const child=spawn(node,[path.join(stage,'node/lib/node_modules/npm/bin/npm-cli.js'),'ci','--ignore-scripts','--legacy-peer-deps','--no-audit','--no-fund'],{cwd:src,env,stdio:'inherit'});
-    const timer=setInterval(()=>console.error('[install] npm dependency installation still running'),15000);
+    const timer=setInterval(()=>status('npm dependency installation still running'),15000);
     child.on('error',error=>{clearInterval(timer);reject(error);});
     child.on('close',code=>{clearInterval(timer);code===0?resolve():reject(Error('npm ci failed: '+code));});
    });
    execFileSync(node,[path.join(src,'patch.mjs'),path.join(src,'node_modules')],{env,stdio:'inherit'});
    const upstream=path.join(stage,'upstream'); fs.mkdirSync(upstream);
-   for(const item of manifest.sources) {if(item.pack&&!skillPacks.includes(item.pack)) continue; if(item.repo==='humanlayer/humanlayer-pi'&&!humanlayer) continue; console.error('[install] Downloading '+item.repo); const dest=path.join(upstream,item.repo.replaceAll('/','-')); fs.mkdirSync(dest); await fetch(`https://codeload.github.com/${item.repo}/tar.gz/${item.sha}`,item.sha256,archive); unpack(archive,dest); fs.unlinkSync(archive);}
+   for(const item of manifest.sources) {if(item.pack&&!skillPacks.includes(item.pack)) continue; if(item.repo==='humanlayer/humanlayer-pi'&&!humanlayer) continue; status('Downloading '+item.repo); const dest=path.join(upstream,item.repo.replaceAll('/','-')); fs.mkdirSync(dest); await fetch(`https://codeload.github.com/${item.repo}/tar.gz/${item.sha}`,item.sha256,archive); unpack(archive,dest); fs.unlinkSync(archive);}
    fs.rmSync(path.join(stage,'npm-cache'),{recursive:true,force:true});
    for(const name of commands) fs.writeFileSync(path.join(stage,name),'#!/bin/sh\nexec "$HOME/.local/share/personal-pi/current/node/bin/node" "$HOME/.local/share/personal-pi/current/source/launch.mjs" '+name+' "$@"\n',{mode:0o755});
    publishRelease(stage,release); stage=undefined;
   }
-  console.error('[install] Verifying release integrity');
+  status('Verifying release integrity');
   for(const [name,expected] of Object.entries(JSON.parse(fs.readFileSync(path.join(release,'integrity.json'))))) if(hash(fs.readFileSync(path.join(release,name)))!==expected) throw Error('Installed release modified: '+name);
   if(!fs.existsSync(settings)) {fs.mkdirSync(agent,{recursive:true}); fs.copyFileSync(path.join(source,'defaults.json'),settings);}
   seedUiPreferences(home);
@@ -96,7 +101,7 @@ if(process.argv[1]&&fs.realpathSync(process.argv[1])===fileURLToPath(import.meta
   if(skillPacks===undefined&&!argv.includes('--yes')&&process.stdin.isTTY&&process.stderr.isTTY) {
    const {createInterface}=await import('node:readline/promises');
    const rl=createInterface({input:process.stdin,output:process.stderr});
-   try {skillPacks=parsePacks((await rl.question('Skill packs: compound,firecrawl,matt-pocock (or all/none) [compound,firecrawl]: ')).trim()||'compound,firecrawl');} finally {rl.close();}
+   try {skillPacks=parsePacks((await rl.question(skillMenu)).trim()||'compound,firecrawl');} finally {rl.close();}
   }
   await install({humanlayer:argv.includes('--with-humanlayer'),skillPacks});
  }

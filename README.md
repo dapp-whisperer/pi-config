@@ -72,9 +72,15 @@ Matt Pocock includes engineering and productivity skills, not experimental or
 miscellaneous collections. These instructions can require external tools; selection
 does not install those tools or execute upstream scripts.
 
-Bootstrap shows curl download progress and extraction stages. Installation reports
+Bootstrap shows clean download and extraction stages, without progress bars. Installation reports
 runtime, npm, source-download, and verification stages. Archive downloads print a
-heartbeat every 15 seconds; npm has the same heartbeat while it runs.
+heartbeat every 15 seconds; npm has the same heartbeat while it runs. npm progress
+spinners are disabled; warnings and errors remain visible. Status colors require an
+interactive stderr, a non-dumb terminal, and NO_COLOR unset.
+
+Skill sources are pinned to reviewed commits in manifest.json, not upstream latest.
+The displayed names identify their upstream authors or projects; updates require
+a new reviewed pin rather than silently following upstream changes.
 
 ## Reproducible public export
 
