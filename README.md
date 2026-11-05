@@ -47,23 +47,24 @@ Host binaries/services such as git, rg, firecrawl, browser tools, or the
 HumanLayer daemon/auth are optional and not provisioned. Skill instructions
 requiring those tools are not proof that the tools are installed.
 
-## Reproducible public export
+## Source ownership
 
-Canonical source remains `pi/bootstrap/` in the private dotfiles checkout. Publish
-**only** the allowlisted export to the public `dapp-whisperer/pi-config` repository:
+This repository owns shared package pins, extensions, themes, defaults, installer,
+launcher, patches, and tests. Edit them here; there is no private canonical source
+or export step. Dotfiles consumes an immutable public commit and archive checksum.
+It owns shell/OS setup and private or machine-specific overrides, not shared sources.
 
-```sh
-sh pi/bootstrap/bootstrap.sh --checkout "$PWD/pi/bootstrap" --export /path/to/new-empty-export-directory
-```
+Publish only reviewed repository files. Never copy HOME, credentials, sessions,
+caches, private agents, or private instructions into this repository. Runtime state
+stays local. Review the staged file inventory before publication.
 
-The export puts the installer at repository root. It copies an explicit file list,
-normalizes file modes, and writes deterministic `export-manifest.json` with SHA-256
-hashes. It refuses nonempty destinations and symlinked sources/destinations. It
-never copies the full private checkout, node_modules, caches or test artifacts;
-new files require explicit allowlist review. Commit the exported tree in pi-config,
-then use **that repository's commit and archive checksum** in the public command.
-Repeat exports from unchanged source have identical bytes and modes; Git publication
-and its commit metadata remain the publisher's responsibility.
+The installer seeds missing global `~/.pi/agent/subagents.json` keys:
+`workflowsEnabled: true`, `fleetView: true`, `widgetMode: "background"`,
+`showModel: true`, and `showCost: true`. Existing explicit values are preserved.
+Project `.pi/subagents.json` overrides global values. The shared engine is
+`@tintinweb/pi-subagents` 0.23.1. No private agent definitions are distributed.
+The model-first footer remains managed; missing UI `toolBackground` defaults to
+`transparent`, without replacing an explicit preference.
 
 `pi auth ...` and `pi mcp ...` dispatch directly to Pi without prepended resource
 arguments. These are management commands, not model prompts. `pi list` prints the
@@ -170,9 +171,8 @@ integrity, not against a malicious upstream release author.
 ## Validation
 
 ```sh
-# Canonical checkout (public export: omit pi/bootstrap/ and cd into export root)
-sh pi/bootstrap/bootstrap.sh --checkout "$PWD/pi/bootstrap" --test
-cd pi/bootstrap && npm audit --omit=dev
+sh bootstrap.sh --checkout "$PWD" --test
+npm audit --omit=dev
 ```
 
 Tests create/delete only temporary HOME directories, with PATH containing only baseline shell/core utilities, curl, tar and checksum tools,
@@ -181,7 +181,7 @@ network connection APIs, independently of PI_OFFLINE. Real downloads and
 npm ci, offline credential-free RPC command/resource discovery in both launchers,
 HumanLayer isolation, core-only absence and add-later/selection retention, real
 shell bootstrap option forwarding and archive checksum rejection, deterministic
-allowlisted export, exact auth/MCP help dispatch, full SDK resource diagnostics,
+checkout installation, exact auth/MCP help dispatch, full SDK resource diagnostics,
 native zigpty PTY output/exit without model calls, archive attack rejection, injected
 inventory/link/activation failure recovery, installed-file
 tamper detection, config/auth preservation, conflict
@@ -203,7 +203,7 @@ Actual Qubes restart behavior requires testing in a Qubes environment; ordinary
 Debian/Linux tests are not evidence of that integration.
 
 The canonical Node pins are in `manifest.json`. After updating them or the safe
-extractor, run `node pi/bootstrap/generate-bootstrap.mjs`; tests reject stale
+extractor, run `node generate-bootstrap.mjs`; tests reject stale
 generated shell pins/extractor. The shell verifies the pinned Node archive before
 standard tar extracts it into an empty temporary directory with ownership and
 permission restoration disabled. Verified source archives then use the embedded

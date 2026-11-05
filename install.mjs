@@ -8,7 +8,7 @@ import {download} from './download.mjs';
 import {unpack} from './archive.mjs';
 export const source=path.dirname(fileURLToPath(import.meta.url));
 export const hash=data=>crypto.createHash('sha256').update(data).digest('hex');
-export function files(root) {return fs.readdirSync(root,{withFileTypes:true}).filter(e=>!['node_modules','__pycache__'].includes(e.name)).flatMap(e=>e.isDirectory()?files(path.join(root,e.name)).map(n=>e.name+'/'+n):e.isFile()?[e.name]:[]).sort();}
+export function files(root) {return fs.readdirSync(root,{withFileTypes:true}).filter(e=>!['.git','node_modules','__pycache__'].includes(e.name)).flatMap(e=>e.isDirectory()?files(path.join(root,e.name)).map(n=>e.name+'/'+n):e.isFile()?[e.name]:[]).sort();}
 function inventory(root) {const result={}; function walk(dir) {for(const e of fs.readdirSync(dir,{withFileTypes:true})) {const p=path.join(dir,e.name); if(e.isDirectory()) walk(p); else if(e.isFile()) result[path.relative(root,p)]=hash(fs.readFileSync(p));}} walk(root); return result;}
 export function publishRelease(stage,release) {fs.writeFileSync(path.join(stage,'integrity.json'),JSON.stringify(inventory(stage))); fs.mkdirSync(path.dirname(release),{recursive:true}); fs.renameSync(stage,release);}
 export function activateRelease(root,release,bindir,commands) {
@@ -43,7 +43,7 @@ export async function install({home=os.homedir(),humanlayer=false,fetch=download
   if(fs.existsSync(release)&&!fs.existsSync(path.join(release,'integrity.json'))) fs.renameSync(release,release+'.incomplete-'+crypto.randomUUID());
   if(!fs.existsSync(release)) {
    stage=fs.mkdtempSync(path.join(root,'build-')); const src=path.join(stage,'source');
-   fs.cpSync(source,src,{recursive:true,filter:p=>!['node_modules','__pycache__'].includes(path.basename(p))});
+   fs.cpSync(source,src,{recursive:true,filter:p=>!['.git','node_modules','__pycache__'].includes(path.basename(p))});
    fs.writeFileSync(path.join(stage,'options.json'),JSON.stringify({humanlayer:!!humanlayer}));
    if(!humanlayer) fs.unlinkSync(path.join(src,'resources/humanlayer-auto-advance.ts'));
    const archive=path.join(stage,'archive.tgz'), extract=path.join(stage,'extract');
@@ -63,6 +63,12 @@ export async function install({home=os.homedir(),humanlayer=false,fetch=download
   for(const [name,expected] of Object.entries(JSON.parse(fs.readFileSync(path.join(release,'integrity.json'))))) if(hash(fs.readFileSync(path.join(release,name)))!==expected) throw Error('Installed release modified: '+name);
   if(!fs.existsSync(settings)) {fs.mkdirSync(agent,{recursive:true}); fs.copyFileSync(path.join(source,'defaults.json'),settings);}
   seedUiPreferences(home);
+  const subagentsFile=path.join(agent,'subagents.json');
+  const subagents=fs.existsSync(subagentsFile)?JSON.parse(fs.readFileSync(subagentsFile,'utf8')):{};
+  const subagentDefaults={workflowsEnabled:true,fleetView:true,widgetMode:'background',showModel:true,showCost:true};
+  let changed=false;
+  for(const [key,value] of Object.entries(subagentDefaults)) if(!Object.hasOwn(subagents,key)) {subagents[key]=value;changed=true;}
+  if(changed) fs.writeFileSync(subagentsFile,JSON.stringify(subagents,null,2)+'\n',{mode:0o600});
   execFileSync(path.join(release,'node/bin/node'),[path.join(release,'source/launch.mjs'),'pi-health'],{cwd:home,env:{...process.env,HOME:home},stdio:'inherit'});
   fs.mkdirSync(bindir,{recursive:true}); activateRelease(root,release,bindir,commands); console.log('Installed '+release+'; add '+bindir+' to PATH.');
   return release;

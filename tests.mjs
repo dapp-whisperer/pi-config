@@ -5,7 +5,7 @@ import path from 'node:path';
 import os from 'node:os';
 import {execFileSync,spawnSync} from 'node:child_process';
 import {source,hash} from './install.mjs';
-import {exportFiles} from './export.mjs';
+
 test('complete Python-free bootstrap and offline runtime preservation', {timeout:900000},async()=>{
  const home=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'pi-e2e-'))),tools=path.join(home,'tools');fs.mkdirSync(tools);
  // No Python, Git, system Node/npm, patch, or user credential environment.
@@ -17,17 +17,17 @@ test('complete Python-free bootstrap and offline runtime preservation', {timeout
   // macOS /var aliases /private/var; CLI entrypoints must run through aliases.
   const sourceAlias=path.join(home,'source-alias');fs.symlinkSync(source,sourceAlias);
   assert.match(run(process.execPath,[path.join(sourceAlias,'install.mjs'),'--help']).stdout,/Usage:/);
-  const aliasExport=path.join(home,'alias-export');run(process.execPath,[path.join(sourceAlias,'export.mjs'),aliasExport]);assert.ok(fs.existsSync(path.join(aliasExport,'export-manifest.json')));
-  const a=path.join(home,'export-a'),b=path.join(home,'export-b');run('/bin/sh',[path.join(source,'bootstrap.sh'),'--checkout',source,'--export',a]);exportFiles(b);assert.equal(fs.readFileSync(path.join(a,'export-manifest.json'),'utf8'),fs.readFileSync(path.join(b,'export-manifest.json'),'utf8'));assert.throws(()=>exportFiles(a));
-  for(const [name,entry] of Object.entries(JSON.parse(fs.readFileSync(path.join(a,'export-manifest.json'))))) {assert.equal(hash(fs.readFileSync(path.join(a,name))),entry.sha256);assert.equal(fs.statSync(path.join(a,name)).mode&0o777,Number(entry.mode));assert.deepEqual(fs.readFileSync(path.join(a,name)),fs.readFileSync(path.join(b,name)));}
-  const linked=path.join(home,'linked');fs.symlinkSync(b,linked);assert.throws(()=>exportFiles(path.join(linked,'nested')));
-  fs.writeFileSync(path.join(b,'private-sentinel'),'never export');const clean=path.join(home,'clean');run(process.execPath,[path.join(b,'export.mjs'),clean]);assert.equal(fs.existsSync(path.join(clean,'private-sentinel')),false);
-  fs.unlinkSync(path.join(b,'defaults.json'));fs.symlinkSync(path.join(a,'defaults.json'),path.join(b,'defaults.json'));run(process.execPath,[path.join(b,'export.mjs'),path.join(home,'refuse-links')],false);
+  const a=path.join(home,'checkout');
+  fs.cpSync(source,a,{recursive:true,filter:p=>!['.git','node_modules'].includes(path.basename(p))});
   // Real shell bootstrap downloads/checks pinned Node under restricted PATH.
   run(path.join(a,'bootstrap.sh')); // clone-and-run from unrelated cwd, no arguments
   const current=path.join(home,'.local/share/personal-pi/current'),bin=path.join(home,'.local/bin'),node=path.join(current,'node/bin/node');
   assert.equal(fs.existsSync(path.join(bin,'pih')),false);assert.equal(fs.existsSync(path.join(current,'source/resources/humanlayer-auto-advance.ts')),false);
   assert.equal(fs.existsSync(path.join(current,'upstream/humanlayer-humanlayer-pi')),false);
+  const subagentsFile=path.join(home,'.pi/agent/subagents.json');
+  assert.deepEqual(JSON.parse(fs.readFileSync(subagentsFile)),{workflowsEnabled:true,fleetView:true,widgetMode:'background',showModel:true,showCost:true});
+  const subagentOverride={workflowsEnabled:false,fleetView:false,widgetMode:'off',showModel:false,showCost:false,customPreserved:'sentinel'};
+  fs.writeFileSync(subagentsFile,JSON.stringify(subagentOverride));
   const settings=path.join(home,'.pi/agent/settings.json'),auth=path.join(home,'.pi/agent/auth.json');const cfg=JSON.parse(fs.readFileSync(settings));cfg.customPreserved='sentinel';fs.writeFileSync(settings,JSON.stringify(cfg));fs.writeFileSync(auth,'{}');const before=fs.readFileSync(settings,'utf8');
   // Exercise verified immutable-source extraction (not only checkout mode).
   const commit='a'.repeat(40), fixtureRoot=path.join(home,'pi-config-'+commit), archive=path.join(home,'public.tgz');
@@ -59,6 +59,7 @@ test('complete Python-free bootstrap and offline runtime preservation', {timeout
   assert.equal(fs.existsSync(path.join(current,'upstream/stablyai-orca')),false);
   cfg.packages=['npm:untrusted'];fs.writeFileSync(settings,JSON.stringify(cfg));assert.match(run(path.join(bin,'pi'),['--version'],false).stderr,/Unmanaged/);run(node,[path.join(a,'install.mjs')],false);fs.writeFileSync(settings,before);run(path.join(bin,'pi-health'));
   fs.writeFileSync(path.join(current,'source/defaults.json'),'{}');assert.match(run(path.join(bin,'pi-health'),[],false).stderr,/modified/);run(node,[path.join(a,'install.mjs')],false);assert.equal(fs.readlinkSync(current),optional);
-  console.log('PASS real shell bootstrap with no Python/Git/system Node/npm/patch; export, install/rerun, optional retention, offline RPC, preservation, health and tamper refusal');
+  assert.deepEqual(JSON.parse(fs.readFileSync(subagentsFile)),subagentOverride);
+  console.log('PASS real shell bootstrap with no Python/Git/system Node/npm/patch; checkout, install/rerun, optional retention, offline RPC, preservation, health and tamper refusal');
  } finally {fs.rmSync(home,{recursive:true,force:true});}
 });
