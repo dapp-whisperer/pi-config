@@ -4,12 +4,18 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import {execFileSync,spawnSync} from 'node:child_process';
-import {source,hash} from './install.mjs';
-
+import {source,hash,parsePacks} from './install.mjs';
+test('skill pack selection validates and normalizes',()=>{
+ assert.deepEqual(parsePacks('all'),['compound','firecrawl','matt-pocock']);
+ assert.deepEqual(parsePacks('none'),[]);
+ assert.deepEqual(parsePacks('matt-pocock,compound,compound'),['compound','matt-pocock']);
+ assert.throws(()=>parsePacks('unknown'));
+ assert.throws(()=>parsePacks(''));
+});
 test('complete Python-free bootstrap and offline runtime preservation', {timeout:900000},async()=>{
  const home=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'pi-e2e-'))),tools=path.join(home,'tools');fs.mkdirSync(tools);
  // No Python, Git, system Node/npm, patch, or user credential environment.
- for(const name of ['sh','uname','mktemp','mkdir','rm','tar','gzip','curl','sha256sum','shasum']) {const found=spawnSync('/bin/sh',['-c',`command -v ${name}`],{encoding:'utf8'}).stdout.trim();if(found) fs.symlinkSync(found,path.join(tools,name));}
+ for(const name of ['sleep','sh','uname','mktemp','mkdir','rm','tar','gzip','curl','sha256sum','shasum']) {const found=spawnSync('/bin/sh',['-c',`command -v ${name}`],{encoding:'utf8'}).stdout.trim();if(found) fs.symlinkSync(found,path.join(tools,name));}
  const env={HOME:home,PATH:tools,PI_OFFLINE:'1',HUMANLAYER_PI_DISABLE:'1'};
  const run=(command,args=[],ok=true,extra={})=>{const r=spawnSync(command,args,{env,cwd:home,encoding:'utf8',timeout:240000,...extra});assert.equal(r.status===0,ok,`${command} ${args}\n${r.stdout}\n${r.stderr}\n${r.error??''}`);return r;};
  try {
@@ -44,9 +50,13 @@ test('complete Python-free bootstrap and offline runtime preservation', {timeout
   const selected=fs.readlinkSync(current);run(node,[path.join(a,'install.mjs')]);assert.equal(fs.readlinkSync(current),selected);
   function rpc(name) {const r=run(path.join(bin,name),['--mode','rpc','--no-session','--no-context-files','--no-approve'],true,{input:'{"id":"commands","type":"get_commands"}\n'});const response=r.stdout.split('\n').filter(l=>l.startsWith('{')).map(l=>JSON.parse(l)).find(x=>x.id==='commands');return new Set(response.data.commands.map(c=>c.name));}
   let names=rpc('pi');assert.ok(names.has('skill:firecrawl'));assert.ok(!names.has('hl-auto'));
-  run(node,[path.join(a,'install.mjs'),'--with-humanlayer']);assert.ok(fs.existsSync(path.join(bin,'pih')));const optional=fs.readlinkSync(current);run(node,[path.join(a,'install.mjs')]);assert.equal(fs.readlinkSync(current),optional);
+  run(node,[path.join(a,'install.mjs'),'--with-humanlayer','--skills=all','--yes']);assert.ok(fs.existsSync(path.join(current,'upstream/mattpocock-skills')));assert.ok(fs.existsSync(path.join(bin,'pih')));const optional=fs.readlinkSync(current);run(node,[path.join(a,'install.mjs')]);assert.equal(fs.readlinkSync(current),optional);
+  run(node,[path.join(a,'install.mjs'),'--skills=none','--yes']);assert.equal(fs.readlinkSync(current),optional);
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(current,'options.json'))).skillPacks,['compound','firecrawl','matt-pocock']);
+  assert.equal(fs.existsSync(path.join(current,'source/.git')),false);
   assert.equal(fs.readFileSync(settings,'utf8'),before);assert.equal(fs.readFileSync(auth,'utf8'),'{}');
   const guard=path.join(home,'deny-network.cjs');fs.writeFileSync(guard,"const deny=()=>{throw Error('NETWORK_FORBIDDEN')};require('node:net').Socket.prototype.connect=deny;require('node:tls').connect=deny;globalThis.fetch=deny;");env.NODE_OPTIONS='--require='+guard;
+  console.log(run(node,[path.join(source,'test_goal_handler.mjs'),path.join(current,'source/node_modules')]).stdout);
   console.log(run(node,[path.join(source,'test_runtime.mjs'),current]).stdout);
    console.log(run(node,[path.join(source,'test_footer.mjs'),current]).stdout);
   console.log(run(node,[path.join(source,'test_humanlayer_auto_advance.mjs')]).stdout);
@@ -54,7 +64,7 @@ test('complete Python-free bootstrap and offline runtime preservation', {timeout
   for(const name of ['pi','pih']) {for(const command of ['auth','mcp']) {const direct=run(node,[cli,command,'--help']),wrapped=run(path.join(bin,name),[command,'--help']);assert.equal(wrapped.stdout,direct.stdout);assert.equal(wrapped.stderr,direct.stderr);}
    for(const command of ['install','update']) assert.match(run(path.join(bin,name),[command,'npm:fake'],false).stderr,/Managed release/);
    assert.match(run(path.join(bin,name),['list']).stdout,/@earendil-works\/pi-coding-agent@1.5.0/);assert.match(run(path.join(bin,name),['config']).stdout,/ordinary preferences/);
-   names=rpc(name);for(const skill of ['skill:ce-work','skill:firecrawl','skill:simple-english','goal','vision'])assert.ok(names.has(skill),skill);assert.equal(names.has('hl-auto'),name==='pih');assert.equal(names.has('skill:create-research'),name==='pih');assert.ok(!names.has('skill:orchestration'));console.log(name,'offline commands',names.size);
+   names=rpc(name);for(const skill of ['skill:ce-work','skill:firecrawl','skill:simple-english','skill:tdd','goal','vision'])assert.ok(names.has(skill),skill);assert.equal(names.has('hl-auto'),name==='pih');assert.equal(names.has('skill:create-research'),name==='pih');assert.ok(!names.has('skill:orchestration'));console.log(name,'offline commands',names.size);
   }
   assert.equal(fs.existsSync(path.join(current,'upstream/stablyai-orca')),false);
   cfg.packages=['npm:untrusted'];fs.writeFileSync(settings,JSON.stringify(cfg));assert.match(run(path.join(bin,'pi'),['--version'],false).stderr,/Unmanaged/);run(node,[path.join(a,'install.mjs')],false);fs.writeFileSync(settings,before);run(path.join(bin,'pi-health'));
