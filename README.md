@@ -47,6 +47,35 @@ Host binaries/services such as git, rg, firecrawl, browser tools, or the
 HumanLayer daemon/auth are optional and not provisioned. Skill instructions
 requiring those tools are not proof that the tools are installed.
 
+## Skill selection and progress
+
+Interactive terminals prompt for `compound`, `firecrawl`, and `matt-pocock`.
+Use a comma-separated list, `all`, or `none`. No menu package is required.
+For scripts or piped installs, selection never reads stdin. The default remains
+Compound Engineering and Firecrawl; Matt Pocock is opt-in.
+
+```sh
+./bootstrap.sh --skills=all --yes
+./bootstrap.sh --skills=matt-pocock --checkout "$PWD"
+./bootstrap.sh --skills=none --yes
+```
+
+Put these options before `--checkout` or the pinned commit/checksum pair.
+`--yes` skips the terminal prompt. Direct `node install.mjs` accepts the same
+selection options. Reruns retain previous selections and add requested packs;
+`none` means add nothing, not remove existing packs. Each selection creates a
+verified release, so rerunning can add packs not selected before. Modified or deleted
+files in an existing release still fail integrity verification rather than being silently repaired. Existing
+user skills are not copied over, deleted, or modified: managed skills remain in
+release directories. Skill-name collisions still follow Pi's resource precedence.
+Matt Pocock includes engineering and productivity skills, not experimental or
+miscellaneous collections. These instructions can require external tools; selection
+does not install those tools or execute upstream scripts.
+
+Bootstrap shows curl download progress and extraction stages. Installation reports
+runtime, npm, source-download, and verification stages. Archive downloads print a
+heartbeat every 15 seconds; npm has the same heartbeat while it runs.
+
 ## Reproducible public export
 
 Canonical source remains `pi/bootstrap/` in the private dotfiles checkout. Publish

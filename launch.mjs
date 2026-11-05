@@ -41,7 +41,7 @@ if(mode==='pih' && !passthrough) console.error('HumanLayer workflow preflight: p
 for(const name of Object.keys(deps)) if(name!=='@earendil-works/pi-coding-agent') args.push('-e',path.join(source,'node_modules',name));
 for(const item of manifest.sources){
  const dir=path.join(release,'upstream',item.repo.replace('/','-'));
- if(!fs.existsSync(dir) && item.repo==='humanlayer/humanlayer-pi') continue;
+ if(!fs.existsSync(dir) && (item.pack || item.repo==='humanlayer/humanlayer-pi')) continue;
  const root=path.join(dir,fs.readdirSync(dir)[0]);
  if(item.repo==='humanlayer/humanlayer-pi'){
   if(mode==='pih') args.push('-e',path.join(source,'resources/humanlayer-auto-advance.ts'),'-e',root);

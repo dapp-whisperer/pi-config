@@ -31,10 +31,11 @@ export async function download(url,digest,dest,{socketTimeout=30000,overallTimeo
  await new Promise((resolve,reject)=>{
   const child=spawn(process.execPath,[fileURLToPath(import.meta.url),'--worker',String(url),digest,String(dest),String(socketTimeout),String(overallTimeout)],{stdio:['ignore','ignore','pipe']});
   let error='',timedOut=false;
+  const progress=setInterval(()=>console.error('[download] Still downloading '+new URL(url).hostname),15000);
   child.stderr.on('data',chunk=>{error=(error+chunk).slice(-8192);});
   const timer=setTimeout(()=>{timedOut=true;child.kill('SIGKILL');},overallTimeout);
-  child.on('error',failure=>{clearTimeout(timer);reject(failure);});
-  child.on('close',code=>{clearTimeout(timer);if(timedOut)reject(Error('Download overall timeout'));else if(code!==0)reject(Error(error||'Download worker failed'));else resolve();});
+  child.on('error',failure=>{clearTimeout(timer);clearInterval(progress);reject(failure);});
+  child.on('close',code=>{clearTimeout(timer);clearInterval(progress);if(timedOut)reject(Error('Download overall timeout'));else if(code!==0)reject(Error(error||'Download worker failed'));else resolve();});
  });
 }
 if(process.argv[2]==='--worker') {

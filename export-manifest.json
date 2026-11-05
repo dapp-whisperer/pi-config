@@ -4,7 +4,7 @@
     "mode": "0o644"
   },
   "README.md": {
-    "sha256": "c9129306190fb4d8b2e0383bfdf6e2f2184cd799fbce72908d778f9f294f31c8",
+    "sha256": "db9fe1613e64987272c0de3c62fc57f2018643c6b7f41fbf1968f08a92dd73b9",
     "mode": "0o644"
   },
   "archive.mjs": {
@@ -12,7 +12,7 @@
     "mode": "0o644"
   },
   "bootstrap.sh": {
-    "sha256": "c5de1c14b307b9302b5349a759120b7c862eee90f55d6b16dae5d53215bad071",
+    "sha256": "813a1db44f66878b2b34b58f3462933ea4d2f00d220557258f6adfbf198ef587",
     "mode": "0o755"
   },
   "defaults.json": {
@@ -20,7 +20,7 @@
     "mode": "0o644"
   },
   "download.mjs": {
-    "sha256": "1fd2a61b2da7ae9cc7a3a016b1ab803b0731e657af5c8f32e2e37746e15ac221",
+    "sha256": "39e4ece0f4d8caa67a0662672cfecde3ca5b38d48bf71b3318ae7b7024d896ef",
     "mode": "0o644"
   },
   "export.mjs": {
@@ -28,19 +28,19 @@
     "mode": "0o644"
   },
   "generate-bootstrap.mjs": {
-    "sha256": "45a7fc9e01c85d6ebccbe54fa1d080b1f0c9e4a380775dbcb84e6b48c9332ced",
+    "sha256": "fc41f4e18197e7d0323e47326647734935b41b5b6cc007869b5080592bee027b",
     "mode": "0o644"
   },
   "install.mjs": {
-    "sha256": "cd9805734517537dcca7432d49ccc1ddf3583c13ca7c918747922d572ad04459",
+    "sha256": "1f9935c71f95f3785dced8206069074d6dea19c8d4cc619fb8a4baa57e5e2e4d",
     "mode": "0o644"
   },
   "launch.mjs": {
-    "sha256": "6f4c142c8e7f1dad91516ae6d5bea9d881d03a871404cc6ebd4b473f26b7d234",
+    "sha256": "b3d098a1fafbc583a403f3e222ae491d26cc340e54b55e6da4245eebb7d5c3f6",
     "mode": "0o644"
   },
   "manifest.json": {
-    "sha256": "0bff9dba593e37f9decefe1d4c185e6196972931efdea66991de2eeb589aed43",
+    "sha256": "7792c41098198be07d48dbf56b5865100991d6bb06d0f9f51041c833a1263d5a",
     "mode": "0o644"
   },
   "package-lock.json": {
@@ -152,7 +152,7 @@
     "mode": "0o644"
   },
   "tests.mjs": {
-    "sha256": "9f0afcfa6329876ff6068acbfae489fdac5b2d118c0dc51db48cff0faeeafd4b",
+    "sha256": "58a39be7ab158470d14b73edf4b3c12d859ef37859c145e345a436932a7470d6",
     "mode": "0o644"
   }
 }
