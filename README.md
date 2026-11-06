@@ -93,11 +93,34 @@ Publish only reviewed repository files. Never copy HOME, credentials, sessions,
 caches, private agents, or private instructions into this repository. Runtime state
 stays local. Review the staged file inventory before publication.
 
-The installer seeds missing global `~/.pi/agent/subagents.json` keys:
-`workflowsEnabled: true`, `fleetView: true`, `widgetMode: "background"`,
-`showModel: true`, and `showCost: true`. Existing explicit values are preserved.
-Project `.pi/subagents.json` overrides global values. The shared engine is
-`@tintinweb/pi-subagents` 0.23.1. No private agent definitions are distributed.
+The sole delegation backend is **`pi-subagents` 0.84.0** (classic). Its original
+`subagent`, background/wait, supervisor, and scripted-workflow APIs remain native;
+no replacement `Agent` tool is loaded. No private agent definitions are distributed.
+Claude-style tool chrome, compact Agents widgets, filled/hollow Fleet selection,
+and unboxed completion notices reuse classic's structured results and controls.
+
+Classic preferences belong in `~/.pi/agent/extensions/subagent/config.json` (see
+classic's packaged configuration guide). `fleetView`, `asyncWidget`, and
+`programStatus` are independent switches; explicit `false` values are respected.
+The installer does not create or rewrite this file. Ordinary Pi `settings.json`
+remains a separate settings surface. Existing global `~/.pi/agent/subagents.json`
+and project `.pi/subagents.json` replacement settings are preserved byte-for-byte
+as inactive rollback data, not translated or seeded: replacement `widgetMode`,
+`workflowsEnabled`, and `showCost` do not configure classic.
+
+Managed global extensions admit only ordinary directories containing the optional
+ordinary `subagent/config.json` settings file. Empty directories are allowed;
+symlinks (including dangling links), executable entrypoints, manifests, hidden
+extras, and every other file/directory are refused by installer and launcher.
+This data-only exception does not allow unmanaged extension code.
+
+Classic's native child records remain the only child-status writer. A pinned local
+Pi native-reporter contribution handle keeps the root **Working** while any owned
+classic child projects working, including after the parent finishes responding.
+Native blocked/Needs-you and compaction take precedence. Child attention is never
+promoted to root blocked; when all children are blocked or terminal, actual parent
+activity/resting status resumes. No GUI patch, custom transport, or extra OSC writer
+is needed. Native terminal capability and `PI_PROGRAM_STATUS=0` gates still apply.
 The model-first footer remains managed; missing UI `toolBackground` defaults to
 `transparent`, without replacing an explicit preference.
 
@@ -211,6 +234,14 @@ Guard the upstream version and exact anchors; reject unknown or partial layouts
 before writing any target. Reapplying a patch must not duplicate its changes.
 Provide a dry-run path and regression tests for guards and shipped behavior.
 
+`subagents-ui-patch.mjs` guards classic 0.84.0 and Claude UI 1.0.109 source and
+published bundle rendering seams. `subagents-status-patch.mjs` separately guards
+Pi 1.5.0 source, declarations and CLI bundle plus classic lifecycle wiring. Both
+validate every target before writing, support dry runs and repeat application,
+and reject version drift, ambiguous anchors, missing modules and partial patches.
+Their disposable-copy guard suites run during installation before activation.
+An upstream upgrade requires re-review; do not bypass these guards.
+
 The goal patch supports `@narumitw/pi-goal` 0.54.13. It posts a visible completion
 summary without triggering another turn. Completion guards and termination remain
 unchanged. Collapsing the tool must leave that summary visible. Before release,
@@ -240,12 +271,33 @@ checkout installation, exact auth/MCP help dispatch, full SDK resource diagnosti
 native zigpty PTY output/exit without model calls, archive attack rejection, injected
 inventory/link/activation failure recovery, installed-file
 tamper detection, config/auth preservation, conflict
-refusal, same-release rerun and health checks are exercised. No model requests.
+refusal, same-release rerun and health checks are exercised. New deterministic
+classic tests execute actual foreground/background children and a scripted workflow
+using a credential-free test provider with Node network APIs denied; no remote model
+requests occur. Installed-component rendering tests cover narrow/wide widths and
+themes, while reporter tests separately cover ownership, precedence, privacy,
+disable gates, bounds and cleanup. These are not real-provider quality tests.
 Linux x64 passed locally and in a disposable Debian 12 (bookworm) curl-baseline
 container, including the restricted-PATH bootstrap. These are not Qubes tests. macOS and other architectures require CI/device results;
-the CI matrix is configured, not evidence of a pass. Interactive Pi UI and actual provider, browser, interactive-shell tool sessions,
-or HumanLayer cloud workflows are not tested; the native PTY test is a local shell
-smoke, not an end-to-end model-directed tool invocation.
+the CI matrix is configured, not evidence of a pass. Actual providers, browser,
+interactive-shell tool sessions and HumanLayer cloud workflows are not tested.
+Browser testing is inapplicable to this terminal-only diff.
+
+Optional native terminal integration (requires an existing `hc` Core CLI):
+
+```sh
+node test_subagents_core.mjs /path/to/disposable/release /path/to/hc
+node test_subagents_core.mjs /path/to/disposable/release /path/to/hc --disabled
+```
+
+This starts a fresh private HOME/XDG/session/socket, asserts an empty Core, runs
+the bundled Pi with classic and Claude UI, and reads native root/child records
+through `hc get`. Actual deterministic children prove overlap, parent Working,
+native question precedence, completion and new-session cleanup. It stops only
+its own Core in `finally`; never substitute a live socket. Set
+`PI_SUBAGENTS_CORE_EVIDENCE` to a scratch filename to retain sanitized JSON records.
+This is unmodified Core consumption, not graphical Herdr or browser verification.
+Core is deliberately not a required service in the portable bootstrap CI matrix.
 
 ## Debian Qubes AppVM deployment
 

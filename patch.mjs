@@ -1,7 +1,11 @@
 import {patchGoal} from './goal-patch.mjs';
+import {patchSubagentsUi} from './subagents-ui-patch.mjs';
+import {patchSubagentsStatus} from './subagents-status-patch.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
+for(const test of ['test_subagents_ui_patch.mjs','test_subagents_status_patch.mjs'])
+ execFileSync(process.execPath,[new URL(test,import.meta.url).pathname,process.argv[2]],{stdio:'inherit'});
 const root = path.join(process.argv[2], '@earendil-works/pi-coding-agent/dist');
 const files = fs.readdirSync(path.join(root,'bundle/chunks')).map(n=>path.join(root,'bundle/chunks',n));
 files.push(path.join(root,'modes/interactive/interactive-mode.js'));
@@ -37,3 +41,5 @@ const plainLinks='\t\tlink: (text: string) => stripAnsi(text),\n\t\tlinkUrl: (te
 const visibleLinks='\t\tlink: (text: string) => theme.link(theme.underline(stripAnsi(text))),\n\t\tlinkUrl: (text: string) => theme.linkUrl(stripAnsi(text)),';
 if(ui.split(plainLinks).length!==2) throw Error('Markdown link patch compatibility failure');
 fs.writeFileSync(uiFile,ui.replace(plainLinks,visibleLinks));
+patchSubagentsUi(process.argv[2]);
+patchSubagentsStatus(process.argv[2]);
