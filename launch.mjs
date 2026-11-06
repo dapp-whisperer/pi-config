@@ -16,6 +16,14 @@ for (let dir=process.cwd();;dir=path.dirname(dir)) {
  if(fs.existsSync(file) && JSON.parse(fs.readFileSync(file)).packages?.length) throw Error('Project package declarations are outside the bootstrap lock: '+file);
  if(path.dirname(dir)===dir) break;
 }
+const subagentsMode=process.env.PI_SUBAGENTS_MODE??'source';
+if(!['source','bundled'].includes(subagentsMode)) throw Error('PI_SUBAGENTS_MODE must be source or bundled');
+if(subagentsMode==='bundled') {
+ const bundle=path.join(source,'node_modules/@tintinweb/pi-subagents/src/bundle.mjs');
+ const inventory=JSON.parse(fs.readFileSync(path.join(release,'integrity.json')));
+ const expected=inventory[path.relative(release,bundle)];
+ if(!expected || crypto.createHash('sha256').update(fs.readFileSync(bundle)).digest('hex')!==expected) throw Error('Installed release modified: '+bundle);
+}
 const mode=process.argv[2], input=process.argv.slice(3);
 if(mode==='pih' && !JSON.parse(fs.readFileSync(path.join(release,'options.json'))).humanlayer) throw Error('Reinstall with --with-humanlayer first.');
 if(['install','update','remove','uninstall'].includes(input[0])) throw Error('Managed release: update by installing an explicitly reviewed bootstrap release, not pi package commands.');
@@ -24,6 +32,7 @@ const deps=JSON.parse(fs.readFileSync(path.join(source,'package.json'))).depende
 const passthrough = ['auth', 'mcp'].includes(input[0]);
 if(input[0]==='list') {
  if(input.length>1 && !['--help','-h'].includes(input[1])) throw Error('Managed list takes no options; it lists the pinned release, not Pi package-manager state.');
+ console.log('Subagents mode: '+subagentsMode+' (bundled is experimental)');
  console.log('Managed release packages (local resources, not Pi package-manager installations):');
  for(const [name, version] of Object.entries(deps)) console.log(`${name}@${version}`);
  for(const item of manifest.sources) {
@@ -38,7 +47,7 @@ if(input[0]==='config') {
 }
 const args=['-e',path.join(source,'resources/model-first-footer.ts')];
 if(mode==='pih' && !passthrough) console.error('HumanLayer workflow preflight: private-derived RPI agent definitions are not distributed. RPI phases requiring codebase-locator, codebase-analyzer, codebase-pattern-finder, web-search-researcher, implementer-agent, outline-implementer-agent or implementation-reviewer are unavailable in this public-only release. Mirroring and public skills load; workflows referencing those agents cannot run unchanged.');
-for(const name of Object.keys(deps)) if(name!=='@earendil-works/pi-coding-agent') args.push('-e',path.join(source,'node_modules',name));
+for(const name of Object.keys(deps)) if(name!=='@earendil-works/pi-coding-agent') args.push('-e',path.join(source,'node_modules',name,...(name==='@tintinweb/pi-subagents'&&subagentsMode==='bundled'?['src/bundle.mjs']:[])));
 for(const item of manifest.sources){
  const dir=path.join(release,'upstream',item.repo.replace('/','-'));
  if(!fs.existsSync(dir) && (item.pack || item.repo==='humanlayer/humanlayer-pi')) continue;
@@ -53,6 +62,7 @@ const cli=path.join(source,'node_modules/@earendil-works/pi-coding-agent/dist/bu
 const env={...process.env,PATH:path.join(release,'node/bin')+path.delimiter+process.env.PATH, PI_SKIP_VERSION_CHECK:'1',PI_TELEMETRY:'0'};
 if(mode!=='pih') env.HUMANLAYER_PI_DISABLE='1';
 if(mode==='pi-health'){
+ console.log('Subagents mode: '+subagentsMode+' (bundled is experimental)');
  for(const [name, expected] of Object.entries(JSON.parse(fs.readFileSync(path.join(release,'integrity.json'))))) {
   const actual=crypto.createHash('sha256').update(fs.readFileSync(path.join(release,name))).digest('hex');
   if(actual!==expected) throw Error('Installed release modified: '+name);

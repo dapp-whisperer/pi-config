@@ -69,11 +69,12 @@ export async function install({home=os.homedir(),humanlayer=false,skillPacks,fet
    const node=path.join(stage,'node/bin/node');
    status('Installing locked npm dependencies');
    await new Promise((resolve,reject)=>{
-    const child=spawn(node,[path.join(stage,'node/lib/node_modules/npm/bin/npm-cli.js'),'ci','--ignore-scripts','--legacy-peer-deps','--no-audit','--no-fund'],{cwd:src,env,stdio:'inherit'});
+    const child=spawn(node,[path.join(stage,'node/lib/node_modules/npm/bin/npm-cli.js'),'ci','--omit=dev','--ignore-scripts','--legacy-peer-deps','--no-audit','--no-fund'],{cwd:src,env,stdio:'inherit'});
     const timer=setInterval(()=>status('npm dependency installation still running'),15000);
     child.on('error',error=>{clearInterval(timer);reject(error);});
     child.on('close',code=>{clearInterval(timer);code===0?resolve():reject(Error('npm ci failed: '+code));});
    });
+   execFileSync(node,[path.join(src,'subagents-bundle.mjs'),'install'],{env,stdio:'inherit'});
    execFileSync(node,[path.join(src,'patch.mjs'),path.join(src,'node_modules')],{env,stdio:'inherit'});
    const upstream=path.join(stage,'upstream'); fs.mkdirSync(upstream);
    for(const item of manifest.sources) {if(item.pack&&!skillPacks.includes(item.pack)) continue; if(item.repo==='humanlayer/humanlayer-pi'&&!humanlayer) continue; status('Downloading '+item.repo); const dest=path.join(upstream,item.repo.replaceAll('/','-')); fs.mkdirSync(dest); await fetch(`https://codeload.github.com/${item.repo}/tar.gz/${item.sha}`,item.sha256,archive); unpack(archive,dest); fs.unlinkSync(archive);}
