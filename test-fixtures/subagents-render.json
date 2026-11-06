@@ -1,0 +1,102 @@
+{
+  "widget-queued-24": [
+    "Agents worker · backgro…",
+    "◦ worker",
+    "  ⎿  queued…"
+  ],
+  "widget-running-24": [
+    "Agents worker · backgro…",
+    "⠋ worker · 0ms",
+    "  ⎿  thinking…"
+  ],
+  "widget-complete-24": [
+    "Agents worker · backgro…",
+    "✓ worker · 0ms",
+    "  ⎿  Done"
+  ],
+  "widget-failed-24": [
+    "Agents worker · backgro…",
+    "✗ worker · 0ms",
+    "  ⎿  Failed"
+  ],
+  "widget-partial-24": [
+    "Agents worker · backgro…",
+    "✗ worker · 0ms",
+    "  ⎿  Partial"
+  ],
+  "widget-rejected-24": [
+    "Agents worker · backgro…",
+    "✗ worker · 0ms",
+    "  ⎿  Rejected"
+  ],
+  "widget-stopped-24": [
+    "Agents worker · backgro…",
+    "■ worker · 0ms",
+    "  ⎿  Stopped"
+  ],
+  "widget-paused-24": [
+    "Agents worker · backgro…",
+    "■ worker · 0ms",
+    "  ⎿  Paused"
+  ],
+  "fleet": [
+    "  ↑↓/jk select · enter inspect · esc back",
+    "",
+    "  ● main",
+    "  ○ worker 界 👩‍💻 é · running                                    0s · ↓ 42 tokens"
+  ],
+  "widget-queued-80": [
+    "Agents worker · background",
+    "◦ worker",
+    "  ⎿  queued…"
+  ],
+  "widget-running-80": [
+    "Agents worker · background",
+    "⠋ worker · 0ms",
+    "  ⎿  thinking…"
+  ],
+  "widget-complete-80": [
+    "Agents worker · background",
+    "✓ worker · 0ms",
+    "  ⎿  Done"
+  ],
+  "widget-failed-80": [
+    "Agents worker · background",
+    "✗ worker · 0ms",
+    "  ⎿  Failed"
+  ],
+  "widget-partial-80": [
+    "Agents worker · background",
+    "✗ worker · 0ms",
+    "  ⎿  Partial"
+  ],
+  "widget-rejected-80": [
+    "Agents worker · background",
+    "✗ worker · 0ms",
+    "  ⎿  Rejected"
+  ],
+  "widget-stopped-80": [
+    "Agents worker · background",
+    "■ worker · 0ms",
+    "  ⎿  Stopped"
+  ],
+  "widget-paused-80": [
+    "Agents worker · background",
+    "■ worker · 0ms",
+    "  ⎿  Paused"
+  ],
+  "result-expanded-false": [
+    "✓ worker · ⟳ 1                                                                  ",
+    "  ⎿  Done                                                                       ",
+    "     fixture output                                                             "
+  ],
+  "result-expanded-true": [
+    "✓ worker · completed                                                            ",
+    "",
+    "Task: Inspect fixture                                                           ",
+    "",
+    "fixture output                                                                  ",
+    "",
+    "1 turn                                                                          "
+  ]
+}

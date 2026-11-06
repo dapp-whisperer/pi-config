@@ -6,11 +6,11 @@
     "@earendil-works/pi-coding-agent": "1.5.0",
     "@getpipher/vision": "0.5.3",
     "@narumitw/pi-goal": "0.54.13",
-    "@tintinweb/pi-subagents": "0.23.1",
     "pi-ask-user": "0.17.0",
     "pi-btw": "0.8.0",
     "pi-claude-code-ui": "1.0.109",
     "pi-interactive-shell": "0.18.0",
+    "pi-subagents": "0.84.0",
     "pi-web-access": "0.46.0"
   },
   "overrides": {

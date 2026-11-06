@@ -20,6 +20,16 @@ try {
  console.log('PASS installed zigpty native PTY (no pipe fallback)');
 } finally {clearTimeout(timer); pty.close();}
 const {DefaultResourceLoader}=await import(pathToFileURL(path.join(source,'node_modules/@earendil-works/pi-coding-agent/dist/index.js')));
+const {discoverAndLoadExtensions}=await import(pathToFileURL(path.join(source,'node_modules/@earendil-works/pi-coding-agent/dist/core/extensions/loader.js')));
+const settingsOnly=fs.mkdtempSync(path.join(os.tmpdir(),'pi-settings-only-'));
+try {
+ fs.mkdirSync(path.join(settingsOnly,'extensions/subagent'),{recursive:true});
+ fs.writeFileSync(path.join(settingsOnly,'extensions/subagent/config.json'),'{ "fleetView": false }\n');
+ const discovered=await discoverAndLoadExtensions([],settingsOnly,settingsOnly);
+ assert.deepEqual(discovered.errors,[]);
+ assert.deepEqual(discovered.extensions,[]);
+ console.log('PASS pinned Pi discovers no executable extension in native settings-only directory');
+} finally {fs.rmSync(settingsOnly,{recursive:true,force:true});}
 const deps=JSON.parse(fs.readFileSync(path.join(source,'package.json'))).dependencies;
 const manifest=JSON.parse(fs.readFileSync(path.join(source,'manifest.json')));
 for(const humanlayer of [false,true]) {
@@ -39,6 +49,11 @@ for(const humanlayer of [false,true]) {
  await loader.reload();
  const loaded=loader.getExtensions();
  assert.deepEqual(loaded.errors,[]);
+ const toolNames=loaded.extensions.flatMap(extension=>[...extension.tools.keys()]);
+ // Supervisor/loader tools are activated by classic's session lifecycle, not discovery.
+ for(const tool of ['subagent','bg_wait'])assert(toolNames.includes(tool),tool);
+ for(const tool of ['Agent','get_subagent_result','steer_subagent'])assert(!toolNames.includes(tool),tool);
+ assert.equal(loaded.extensions.filter(extension=>extension.path.includes('pi-subagents')).length,1);
  const diagnostics=[...loader.getSkills().diagnostics,...loader.getPrompts().diagnostics,...loader.getThemes().diagnostics];
  console.log(JSON.stringify({mode:humanlayer?'pih':'pi',extensions:loaded.extensions.length,skills:loader.getSkills().skills.length,themes:loader.getThemes().themes.length,diagnostics}));
  assert.equal(diagnostics.filter(d=>d.type==='error').length,0);

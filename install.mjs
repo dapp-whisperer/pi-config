@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {execFileSync,spawn} from 'node:child_process';
 import {download} from './download.mjs';
 import {unpack} from './archive.mjs';
+import {assertManagedGlobalExtensions} from './extension-ownership.mjs';
 export const source=path.dirname(fileURLToPath(import.meta.url));
 export const hash=data=>crypto.createHash('sha256').update(data).digest('hex');
 export function files(root) {return fs.readdirSync(root,{withFileTypes:true}).filter(e=>!['.git','node_modules','__pycache__'].includes(e.name)).flatMap(e=>e.isDirectory()?files(path.join(root,e.name)).map(n=>e.name+'/'+n):e.isFile()?[e.name]:[]).sort();}
@@ -52,7 +53,7 @@ export async function install({home=os.homedir(),humanlayer=false,skillPacks,fet
   for(const name of commands) {const p=path.join(bindir,name), st=fs.lstatSync(p,{throwIfNoEntry:false}); if(st&&(!st.isSymbolicLink()||fs.readlinkSync(p)!==path.join(current,name))) throw Error('Refusing to replace '+p);}
   if(process.env.PI_CODING_AGENT_DIR) throw Error('Unset PI_CODING_AGENT_DIR');
   const agent=path.join(home,'.pi/agent'),settings=path.join(agent,'settings.json'),extensions=path.join(agent,'extensions');
-  if(fs.existsSync(extensions)&&fs.readdirSync(extensions).length) throw Error('Unmanaged global extensions');
+  assertManagedGlobalExtensions(extensions);
   if(fs.existsSync(settings)) {const cfg=JSON.parse(fs.readFileSync(settings)); if(cfg.packages?.length||(cfg.extensions??[]).some(x=>!x.startsWith('-')&&!x.startsWith('builtin:'))) throw Error('Unmanaged configured packages/extensions');}
   if(fs.existsSync(release)&&!fs.existsSync(path.join(release,'integrity.json'))) fs.renameSync(release,release+'.incomplete-'+crypto.randomUUID());
   if(!fs.existsSync(release)) {
@@ -85,12 +86,6 @@ export async function install({home=os.homedir(),humanlayer=false,skillPacks,fet
   for(const [name,expected] of Object.entries(JSON.parse(fs.readFileSync(path.join(release,'integrity.json'))))) if(hash(fs.readFileSync(path.join(release,name)))!==expected) throw Error('Installed release modified: '+name);
   if(!fs.existsSync(settings)) {fs.mkdirSync(agent,{recursive:true}); fs.copyFileSync(path.join(source,'defaults.json'),settings);}
   seedUiPreferences(home);
-  const subagentsFile=path.join(agent,'subagents.json');
-  const subagents=fs.existsSync(subagentsFile)?JSON.parse(fs.readFileSync(subagentsFile,'utf8')):{};
-  const subagentDefaults={workflowsEnabled:true,fleetView:true,widgetMode:'background',showModel:true,showCost:true};
-  let changed=false;
-  for(const [key,value] of Object.entries(subagentDefaults)) if(!Object.hasOwn(subagents,key)) {subagents[key]=value;changed=true;}
-  if(changed) fs.writeFileSync(subagentsFile,JSON.stringify(subagents,null,2)+'\n',{mode:0o600});
   execFileSync(path.join(release,'node/bin/node'),[path.join(release,'source/launch.mjs'),'pi-health'],{cwd:home,env:{...process.env,HOME:home},stdio:'inherit'});
   fs.mkdirSync(bindir,{recursive:true}); activateRelease(root,release,bindir,commands); console.log('Installed '+release+'; add '+bindir+' to PATH.');
   return release;

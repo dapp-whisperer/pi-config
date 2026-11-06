@@ -4,13 +4,15 @@ import path from 'node:path';
 import os from 'node:os';
 import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
+import {assertManagedGlobalExtensions} from './extension-ownership.mjs';
 const source=path.dirname(fileURLToPath(import.meta.url)), release=path.dirname(source);
 const manifest=JSON.parse(fs.readFileSync(path.join(source,'manifest.json')));
 const home=path.join(os.homedir(),'.pi/agent');
 const cfg=JSON.parse(fs.readFileSync(path.join(home,'settings.json')));
 if(process.env.PI_CODING_AGENT_DIR) throw Error('Unset PI_CODING_AGENT_DIR: bootstrap uses the shared default agent directory.');
 if(cfg.packages?.length) throw Error('Unmanaged settings.packages detected; back up settings and remove package declarations before using this pinned launcher.');
-if((cfg.extensions??[]).some(x=>!x.startsWith('-')&&!x.startsWith('builtin:')) || (fs.existsSync(path.join(home,'extensions')) && fs.readdirSync(path.join(home,'extensions')).length)) throw Error('Unmanaged global extensions detected. Move them aside explicitly; they can activate HumanLayer or floating dependencies.');
+assertManagedGlobalExtensions(path.join(home,'extensions'));
+if((cfg.extensions??[]).some(x=>!x.startsWith('-')&&!x.startsWith('builtin:'))) throw Error('Unmanaged global extensions detected. Move them aside explicitly; they can activate HumanLayer or floating dependencies.');
 for (let dir=process.cwd();;dir=path.dirname(dir)) {
  const file=path.join(dir,'.pi/settings.json');
  if(fs.existsSync(file) && JSON.parse(fs.readFileSync(file)).packages?.length) throw Error('Project package declarations are outside the bootstrap lock: '+file);

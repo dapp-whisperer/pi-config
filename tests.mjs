@@ -1,10 +1,16 @@
 import {test} from 'node:test';
+import './test_extension_ownership.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import {execFileSync,spawnSync} from 'node:child_process';
 import {source,hash,parsePacks} from './install.mjs';
+test('classic is the only pinned subagent backend',()=>{
+ const deps=JSON.parse(fs.readFileSync(path.join(source,'package.json'))).dependencies;
+ assert.equal(deps['pi-subagents'],'0.84.0');
+ assert.equal(deps['@tintinweb/pi-subagents'],undefined);
+});
 test('skill pack selection validates and normalizes',()=>{
  assert.deepEqual(parsePacks('all'),['compound','firecrawl','matt-pocock']);
  assert.deepEqual(parsePacks('none'),[]);
@@ -31,9 +37,16 @@ test('complete Python-free bootstrap and offline runtime preservation', {timeout
   assert.equal(fs.existsSync(path.join(bin,'pih')),false);assert.equal(fs.existsSync(path.join(current,'source/resources/humanlayer-auto-advance.ts')),false);
   assert.equal(fs.existsSync(path.join(current,'upstream/humanlayer-humanlayer-pi')),false);
   const subagentsFile=path.join(home,'.pi/agent/subagents.json');
-  assert.deepEqual(JSON.parse(fs.readFileSync(subagentsFile)),{workflowsEnabled:true,fleetView:true,widgetMode:'background',showModel:true,showCost:true});
-  const subagentOverride={workflowsEnabled:false,fleetView:false,widgetMode:'off',showModel:false,showCost:false,customPreserved:'sentinel'};
-  fs.writeFileSync(subagentsFile,JSON.stringify(subagentOverride));
+  assert.equal(fs.existsSync(subagentsFile),false);
+  const subagentOverride='{ "workflowsEnabled": false, "fleetView": false, "widgetMode": "off", "showModel": false, "showCost": false, "unknown": 42 }\n';
+  fs.writeFileSync(subagentsFile,subagentOverride);
+  const classicFile=path.join(home,'.pi/agent/extensions/subagent/config.json');
+  assert.equal(fs.existsSync(classicFile),false);
+  fs.mkdirSync(path.dirname(classicFile),{recursive:true});
+  const classicPreferences='{ "fleetView": false, "asyncWidget": false, "programStatus": false, "disabledFeatures": [] }\n';
+  fs.writeFileSync(classicFile,classicPreferences);
+  const projectFile=path.join(home,'.pi/subagents.json');
+  fs.writeFileSync(projectFile,subagentOverride);
   const settings=path.join(home,'.pi/agent/settings.json'),auth=path.join(home,'.pi/agent/auth.json');const cfg=JSON.parse(fs.readFileSync(settings));cfg.customPreserved='sentinel';fs.writeFileSync(settings,JSON.stringify(cfg));fs.writeFileSync(auth,'{}');const before=fs.readFileSync(settings,'utf8');
   // Exercise verified immutable-source extraction (not only checkout mode).
   const commit='a'.repeat(40), fixtureRoot=path.join(home,'pi-config-'+commit), archive=path.join(home,'public.tgz');
@@ -58,6 +71,8 @@ test('complete Python-free bootstrap and offline runtime preservation', {timeout
   const guard=path.join(home,'deny-network.cjs');fs.writeFileSync(guard,"const deny=()=>{throw Error('NETWORK_FORBIDDEN')};require('node:net').Socket.prototype.connect=deny;require('node:tls').connect=deny;globalThis.fetch=deny;");env.NODE_OPTIONS='--require='+guard;
   console.log(run(node,[path.join(source,'test_goal_handler.mjs'),path.join(current,'source/node_modules')]).stdout);
   console.log(run(node,[path.join(source,'test_runtime.mjs'),current]).stdout);
+  for(const test of ['test_subagents_ui.mjs','test_subagents_status.mjs','test_subagents_parent_status.mjs','test_subagents_runtime.mjs'])
+   console.log(run(node,[path.join(source,test),current]).stdout);
   console.log(run(node,[path.join(source,'test_footer.mjs'),current]).stdout);
   console.log(run(node,[path.join(source,'test_links.mjs'),current],true,{env:{...env,FORCE_COLOR:'3'}}).stdout);
   console.log(run(node,[path.join(source,'test_humanlayer_auto_advance.mjs')]).stdout);
@@ -70,7 +85,9 @@ test('complete Python-free bootstrap and offline runtime preservation', {timeout
   assert.equal(fs.existsSync(path.join(current,'upstream/stablyai-orca')),false);
   cfg.packages=['npm:untrusted'];fs.writeFileSync(settings,JSON.stringify(cfg));assert.match(run(path.join(bin,'pi'),['--version'],false).stderr,/Unmanaged/);run(node,[path.join(a,'install.mjs')],false);fs.writeFileSync(settings,before);run(path.join(bin,'pi-health'));
   fs.writeFileSync(path.join(current,'source/defaults.json'),'{}');assert.match(run(path.join(bin,'pi-health'),[],false).stderr,/modified/);run(node,[path.join(a,'install.mjs')],false);assert.equal(fs.readlinkSync(current),optional);
-  assert.deepEqual(JSON.parse(fs.readFileSync(subagentsFile)),subagentOverride);
+  assert.equal(fs.readFileSync(subagentsFile,'utf8'),subagentOverride);
+  assert.equal(fs.readFileSync(projectFile,'utf8'),subagentOverride);
+  assert.equal(fs.readFileSync(classicFile,'utf8'),classicPreferences);
   console.log('PASS real shell bootstrap with no Python/Git/system Node/npm/patch; checkout, install/rerun, optional retention, offline RPC, preservation, health and tamper refusal');
  } finally {fs.rmSync(home,{recursive:true,force:true});}
 });
