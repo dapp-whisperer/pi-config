@@ -58,6 +58,7 @@ test('complete Python-free bootstrap and offline runtime preservation', {timeout
   const guard=path.join(home,'deny-network.cjs');fs.writeFileSync(guard,"const deny=()=>{throw Error('NETWORK_FORBIDDEN')};require('node:net').Socket.prototype.connect=deny;require('node:tls').connect=deny;globalThis.fetch=deny;");env.NODE_OPTIONS='--require='+guard;
   console.log(run(node,[path.join(source,'test_goal_handler.mjs'),path.join(current,'source/node_modules')]).stdout);
   console.log(run(node,[path.join(source,'test_runtime.mjs'),current]).stdout);
+  console.log(run(node,[path.join(source,'test_bundle_installed.mjs'),current]).stdout);
    console.log(run(node,[path.join(source,'test_footer.mjs'),current]).stdout);
   console.log(run(node,[path.join(source,'test_humanlayer_auto_advance.mjs')]).stdout);
   const cli=path.join(current,'source/node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js');
