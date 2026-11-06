@@ -36,6 +36,7 @@ export const FILES=[
   "resources/themes/solarized-light-dotfiles.json",
   "resources/themes/tokyonight-night-palette.json",
   "resources/themes/tomorrow-night-bright-palette.json",
+  "test_ask_user_program_status.mjs",
   "test_humanlayer_auto_advance.mjs",
   "test_runtime.mjs",
   "test_footer.mjs",

@@ -4,7 +4,7 @@
     "mode": "0o644"
   },
   "README.md": {
-    "sha256": "cc3629865ecf508e03a95b61171e79adcdc7cba110f3ee51ec6f33fb64e27858",
+    "sha256": "13238a9ef1fe75a8f0a0999d1a8c63bfc1fb1e0e4048a9124e77afcfc54254a3",
     "mode": "0o644"
   },
   "archive.mjs": {
@@ -24,7 +24,7 @@
     "mode": "0o644"
   },
   "export.mjs": {
-    "sha256": "120b333f963b94d3cedb554fcb515ae6263b9d2e5b7ec9b3edc595ae4751ec65",
+    "sha256": "be0cf73ccca046513f9042b3afb145631febc7b7c0edcdf541ffe0c3bb0b0601",
     "mode": "0o644"
   },
   "generate-bootstrap.mjs": {
@@ -52,7 +52,7 @@
     "mode": "0o644"
   },
   "patch.mjs": {
-    "sha256": "37e9cd4e09e88d728be41ee6cb9e1778872d48cacfbfb4716b2625efe4013938",
+    "sha256": "c6c7332565ebf4088eaffe0443a39ba08bea4ec8f6509cb41efcb3bb0b33520e",
     "mode": "0o644"
   },
   "resources/humanlayer-auto-advance.ts": {
@@ -131,6 +131,10 @@
     "sha256": "f54216e44c69a0e3fc9f0cea63beb7f1001066e4f1eedf1b42466b8f23a3e583",
     "mode": "0o644"
   },
+  "test_ask_user_program_status.mjs": {
+    "sha256": "4bfbc5e030baa64469ea528c333dc9104291eb77b8cde000d5dd0afbd4419391",
+    "mode": "0o644"
+  },
   "test_humanlayer_auto_advance.mjs": {
     "sha256": "362aa682ed286380b16bf1375ad13a6ea5d4f432ade43089fb9d2843ff77e19c",
     "mode": "0o644"
@@ -148,7 +152,7 @@
     "mode": "0o644"
   },
   "tests.mjs": {
-    "sha256": "ce22ed7fc26f9e8a742f73bf707084addd0fd8c25ac9b48eec23ab0f1619426f",
+    "sha256": "5da10fb8b0248db358c467953f81427679c7fb41e851f8f1dfb388445da4c520",
     "mode": "0o644"
   }
 }
