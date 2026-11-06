@@ -15,7 +15,9 @@ The status patch registers blocking only after attachment returns. It therefore 
 - Approved contract: [Ask User Program Status plan](../plans/2026-11-06-ask-user-program-status-plan.md), R4 and the implementation-time boundary under Assumptions and Risks.
 - Regression characterization: `test_ask_user_program_status.mjs`, the real `TuiBase` visibility-callback failure scenario. It verifies no blocked source or blocked report, observes the existing orphan, and explicitly removes it in test cleanup. The orphan assertion documents existing behavior, not desired behavior.
 - Fresh review run: `20261106-012723-a2d465ba`, completed `2026-11-06T01:31:58.562775+00:00`; local artifact: `/tmp/compound-engineering-1000/ce-code-review/20261106-012723-a2d465ba/review.json`.
-- Review verdict: **Ready to merge**, with no actionable findings within the approved scope. The review states: “Accepted pre-handle TUI orphan boundary is explicitly characterized.” Its fresh isolated bootstrap run passed all 7 tests with no failures or skips.
+- Old-base review verdict: **Ready to merge**, with no actionable findings within the approved scope. The review states: “Accepted pre-handle TUI orphan boundary is explicitly characterized.” Its isolated bootstrap run passed all 7 tests with no failures or skips. This verdict predates branch integration and is not a review of the merged tree.
+- Integration with main `56953c3e2eb3342a13e84b9e3fd317bff542711e` preserves this characterization and the reviewed status logic. Fresh integrated checkout bootstrap passed 16 tests with no failures or skips; the targeted SDK/plugin/bundled-PTY test also passed. Logs: `/tmp/pi-ask-status-integration-20261106/bootstrap.log` and `targeted.log`. Parent review of the integrated tree remains separate.
+- Earlier isolated Core child-record evidence used the old subagent package. Main's replacement `@tintinweb/pi-subagents` 0.23.1 has no native child OSC reporter in the inspected source or shipped build; its UI widget/footer updates are not terminal status records. No bridge or dependency substitution was added. This does not alter the R4 disposition.
 
 ## Follow-up and durability
 

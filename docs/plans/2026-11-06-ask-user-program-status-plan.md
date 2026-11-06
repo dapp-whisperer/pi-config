@@ -92,7 +92,7 @@ stateDiagram-v2
 ### Assumptions and Risks
 
 The existing native protocol is the integration boundary; successful OSC capture proves the bootstrap side, not an observed GUI session.
-A live HerdrCore session is unavailable; the parent's read-only `hc` 0.1.18 schema inspection supports the transport choice but is not a live acceptance result.
+At planning time, only the parent's read-only `hc` 0.1.18 schema inspection was available. Later isolated Core evidence on the old `ae10922` base exercised Ask lifecycle and controlled child records, but did not render the GUI. That child-record evidence does not validate main's replacement `@tintinweb/pi-subagents` dependency; current-tree validation must be recorded separately.
 Bundle minification makes exact anchors version-sensitive; compatibility failures must stop installation before activation.
 The implementation may choose small test doubles for terminal/editor services, but must execute the real pinned lifecycle and reporter rather than reimplementing their logic in tests.
 
@@ -101,7 +101,7 @@ Implementation-time boundary approved by the parent: pinned TUI.showOverlay inse
 ### Research Anchors
 
 - `patch.mjs`: existing four update guards, bundled/SDK scan, exact Ask replacements, and JavaScript parse checks.
-- `tests.mjs`, `test_runtime.mjs`, `test_footer.mjs`, `export.mjs`: isolated HOME installation, pinned SDK imports, `jiti` aliases, native `zigpty`, network denial, and explicit export allowlist.
+- `tests.mjs`, `test_runtime.mjs`, `test_footer.mjs`: isolated HOME checkout installation, pinned SDK imports, `jiti` aliases, native `zigpty`, and network denial. Main `56953c3` owns the public source directly and removed the old export allowlist and manifest.
 - Dependency-relative under `node_modules/@earendil-works/pi-coding-agent/`: `dist/modes/interactive/interactive-mode.js` (`showExtensionCustom`, `showTopExtensionDialog`), `dist/bundle/chunks/*.js` (minified lifecycle), `dist/modes/interactive/program-status-reporter.js`, and `dist/core/extensions/types.d.ts` (`ExtensionUIContext.custom`). The latter currently documents blocking as inline-only; the local patch's overlay extension must be documented in this repo.
 - Same dependency: `docs/extensions.md` (custom factories, `done`, visibility handles), `docs/terminal-setup.md` (program status), `examples/extensions/overlay-test.ts`, and `examples/sdk/06-extensions.ts` (registered commands/tools and resource loading). Use `done` to finish a custom overlay, not external `handle.hide()`.
 - Dependency-relative `node_modules/pi-ask-user/index.ts`: `buildCustomUIOptions`, `runCustomPrompt`, `whileBlocked`, registered `ask_user.execute`, and batch handling. `settings.ts` confirms the default and environment/config precedence.
@@ -123,8 +123,8 @@ Implementation-time boundary approved by the parent: pinned TUI.showOverlay inse
 
 - **Depends on:** U1.
 - **Goal / requirements:** Implement R1, R2, and R5-R8 through KTD3; prove AE1-AE3 end to end across the changed seams.
-- **Files:** `patch.mjs`; `test_ask_user_program_status.mjs`; `tests.mjs`; `export.mjs`; `README.md`.
-- **Approach:** Extend existing Ask replacements without disturbing layout patches. Load the actual Ask extension with the pinned `jiti`/resource-loader patterns and capture its registered tool. Exercise that tool against native UI lifecycle services. Add the test to the existing temporary-HOME installation flow and export allowlist. Document the local overlay-status extension and its test boundary briefly in README; do not alter unrelated CI claims.
+- **Files:** `patch.mjs`; `test_ask_user_program_status.mjs`; `tests.mjs`; `README.md`.
+- **Approach:** Extend existing Ask replacements without disturbing layout patches. Load the actual Ask extension with the pinned `jiti`/resource-loader patterns and capture its registered tool. Exercise that tool against native UI lifecycle services. Add the test to the existing temporary-HOME checkout installation flow alongside main's goal and link tests. Document the local overlay-status extension and its test boundary briefly in README; do not alter unrelated CI claims.
 - **Test scenarios:** (1) Actual single-select, multi-select, and batch calls supply R5 metadata in default overlay and explicit inline modes. (2) Answer, Escape, timeout, already-aborted signal, and abort while hidden restore status and remove plugin timers/listeners; tool results and legacy true/false event pairing remain intact. (3) Invalid questions do not open UI or block; no-UI errors and RPC `custom()` fallback preserve existing behavior. (4) Optionless native input remains unchanged. (5) A disposable extension fixture wraps the real Ask registration and exposes a command that invokes its captured tool with the command context, without a model request. Launch the actual patched bundled CLI through pinned `zigpty`, invoke the command, hide/reopen the default overlay, answer it, and assert captured OSC 7501 blocked/question/generic-message then restoration. Repeat explicit inline and one cancellation path. Parse framed reports across PTY chunks and decode `msg`; sentinel question/context/answer text must not appear in the decoded status payload. (6) Use `PI_PROGRAM_STATUS=1` for deterministic positive PTY coverage and `=0` for a no-report negative case; unit coverage keeps native default gating unchanged.
 - **Verification:** SDK/plugin scenarios and the real bundled CLI PTY smoke pass under temporary HOME with no provider credentials or network access. Bound waits, kill and close PTYs in cleanup, and remove fixtures even on failure. Export round-trip includes the new test file.
 
@@ -134,14 +134,22 @@ Implementation-time gates only; none are run during planning.
 
 - Run `node --check patch.mjs` and syntax-check the new test script.
 - Run `node test_ask_user_program_status.mjs <isolated-release>` using the installed pinned Node where needed; the argument is a disposable release created by the test harness, never the active personal-Pi release.
-- Run `sh bootstrap.sh --checkout "$PWD" --test` for existing isolated bootstrap, export, safety, runtime, footer, and new status coverage. Preserve the existing network-denial guard around runtime checks.
+- Run `sh bootstrap.sh --checkout "$PWD" --test` for existing isolated checkout bootstrap, first-run, safety, goal, runtime, footer, link, and new status coverage. Preserve the existing network-denial guard around runtime checks.
 - Record a red/green overlay regression and actual OSC payload evidence from the bundle, not just patch-text assertions. Report platform/dependency-download failures honestly rather than silently skipping acceptance cases.
 - Live GUI inspection is optional later operator evidence, not a reason to deploy during this task. No `release:validate` script or skill-behavior evaluation applies.
+
+### Branch-currency validation (2026-11-06)
+
+Main `56953c3e2eb3342a13e84b9e3fd317bff542711e` was integrated after the old-base review. Its direct-checkout ownership architecture, deleted export files, workflow, goal/link patches and tests, and replacement subagent package remain authoritative. The reviewed Ask status implementation and regression script are unchanged; the test invocation joins main's network-denied runtime checks.
+
+Fresh integrated validation passed all 16 bootstrap tests with no failures or skips, then passed the targeted SDK/plugin/bundled-CLI PTY test again against a new isolated installation. Logs are `/tmp/pi-ask-status-integration-20261106/bootstrap.log` and `targeted.log`. This is Linux x64 terminal-protocol evidence, not a new Core GUI or model-directed child run. Parent review and current-runtime Core Ask lifecycle evidence remain separate gates.
+
+Read-only inspection of installed `@tintinweb/pi-subagents` 0.23.1 found no native child OSC reporter in `src` or `dist`. Its runner creates SDK sessions; its UI uses widget/footer status rather than terminal status records. Earlier Core child-record evidence used the removed package and cannot be transferred to this dependency. No reporting bridge or package change is authorized by this integration.
 
 ## Definition of Done
 
 U1 passes SDK lifecycle, precedence, and failure scenarios plus compatibility checks for both pinned runtime surfaces.
-U2 passes real-plugin and bundled-PTY scenarios, including hidden unanswered overlays and generic status payloads; the export includes its test.
+U2 passes real-plugin and bundled-PTY scenarios, including hidden unanswered overlays and generic status payloads; checkout installation includes its test.
 Existing bootstrap regressions pass, with changes limited to the named files and no active installation writes.
 The diff contains no abandoned experiments, production test hooks, bridge code, dependency changes, or generated runtime artifacts.
 Review reports distinguish protocol evidence from unavailable live HerdrCore GUI evidence; the parent retains publication and deployment ownership.

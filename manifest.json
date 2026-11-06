@@ -21,6 +21,7 @@
     },
     {
       "repo": "EveryInc/compound-engineering-plugin",
+      "pack": "compound",
       "sha": "071b08ea7d30e74c5210eb9ef9d62a4c8f4b8b81",
       "sha256": "9713420e0d64492bd9b21d3effa79d1280f640249803e4f172c4635eb13ae7d1",
       "skills": [
@@ -29,11 +30,19 @@
     },
     {
       "repo": "firecrawl/skills",
+      "pack": "firecrawl",
       "sha": "458d9d0331fb31121fd38e0e09ae5036f952784b",
       "sha256": "348d3ef511a8e5cda7f460f01a25be97622cc58af0eef9afe5b10fcbad335e5a",
       "skills": [
         "skills"
       ]
+    },
+    {
+      "repo": "mattpocock/skills",
+      "pack": "matt-pocock",
+      "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
+      "sha256": "75b8a2ddccef7fc11059373dff29900934fc46bcb7bfdcfb034a699ce2cb0176",
+      "skills": ["skills/engineering", "skills/productivity"]
     },
     {
       "repo": "AminBlg/SimpleEnglish",

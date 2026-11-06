@@ -1,3 +1,4 @@
+import {patchGoal} from './goal-patch.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
@@ -66,3 +67,16 @@ ask = replaceExactly(ask,
   '): { overlay?: boolean; overlayOptions?: OverlayOptions; onHandle?: (handle: OverlayHandle) => void; blocked: { kind: "question"; message: string } } {\n   const blocked = { kind: "question" as const, message: "Waiting for user response" };\n   switch (displayMode) {\n      case "inline":\n         return { blocked };', askFile);
 ask = replaceExactly(ask, '            overlay: true,\n            overlayOptions:', '            overlay: true,\n            blocked,\n            overlayOptions:', askFile, 2);
 fs.writeFileSync(askFile,ask);
+patchGoal(process.argv[2]);
+execFileSync(process.execPath, [new URL('./test_goal_patch.mjs', import.meta.url).pathname], {stdio:'inherit'});
+execFileSync(process.execPath, [new URL('./test_goal_handler.mjs', import.meta.url).pathname, process.argv[2]], {stdio:'inherit'});
+
+// The Claude-style UI strips all ANSI styling from links for copy safety.
+// Reapply semantic link styles after stripping nested body colors; OSC 8 targets
+// are added by Pi afterwards, so click/copy behavior remains unchanged.
+const uiFile=path.join(process.argv[2],'pi-claude-code-ui/extensions/index.ts');
+let ui=fs.readFileSync(uiFile,'utf8');
+const plainLinks='\t\tlink: (text: string) => stripAnsi(text),\n\t\tlinkUrl: (text: string) => stripAnsi(text),';
+const visibleLinks='\t\tlink: (text: string) => theme.link(theme.underline(stripAnsi(text))),\n\t\tlinkUrl: (text: string) => theme.linkUrl(stripAnsi(text)),';
+if(ui.split(plainLinks).length!==2) throw Error('Markdown link patch compatibility failure');
+fs.writeFileSync(uiFile,ui.replace(plainLinks,visibleLinks));
