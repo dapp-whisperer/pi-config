@@ -37,3 +37,17 @@ const plainLinks='\t\tlink: (text: string) => stripAnsi(text),\n\t\tlinkUrl: (te
 const visibleLinks='\t\tlink: (text: string) => theme.link(theme.underline(stripAnsi(text))),\n\t\tlinkUrl: (text: string) => theme.linkUrl(stripAnsi(text)),';
 if(ui.split(plainLinks).length!==2) throw Error('Markdown link patch compatibility failure');
 fs.writeFileSync(uiFile,ui.replace(plainLinks,visibleLinks));
+
+// Pi-claude-code-ui watches raw stdin for terminal focus events. In RPC mode
+// stdin carries JSONL commands, so its listener consumed get_state /
+// get_available_models before pi's RPC reader attached. Skip it when stdin is
+// not a TTY (RPC and print modes); interactive pi still gets the feature.
+const terminalThemeFile = path.join(process.argv[2], 'pi-claude-code-ui/extensions/terminal-theme.ts');
+let terminalTheme = fs.readFileSync(terminalThemeFile, 'utf8');
+const terminalThemeAnchor = 'export function startFocusResync(ui: any, isEnabled: () => boolean, io: TerminalIo = processIo): void {\n\tconst s = state();\n';
+const terminalThemeGuard = '\t// RPC and print modes use stdin for JSONL commands; a data listener here would\n\t// consume those records before pi\'s RPC reader sees them.\n\tif (io === processIo && !process.stdin.isTTY) return;\n';
+if (!terminalTheme.includes(terminalThemeGuard)) {
+  if (terminalTheme.split(terminalThemeAnchor).length !== 2) throw new Error('Terminal-theme patch compatibility failure');
+  terminalTheme = terminalTheme.replace(terminalThemeAnchor, terminalThemeAnchor + terminalThemeGuard);
+  fs.writeFileSync(terminalThemeFile, terminalTheme);
+}

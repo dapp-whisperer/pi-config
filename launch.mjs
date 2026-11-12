@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 import path from 'node:path';
 import os from 'node:os';
 import {fileURLToPath} from 'node:url';
-import {spawnSync} from 'node:child_process';
+import {spawn, spawnSync} from 'node:child_process';
 const source=path.dirname(fileURLToPath(import.meta.url)), release=path.dirname(source);
 const manifest=JSON.parse(fs.readFileSync(path.join(source,'manifest.json')));
 const home=path.join(os.homedir(),'.pi/agent');
@@ -63,7 +63,7 @@ if(mode==='pi-health'){
  console.log(fs.existsSync(path.join(home,'auth.json'))?'Credentials file present (not read or validated).':'No saved credentials: run pi, then /login; or configure provider API-key environment variables.');
  console.log('Optional: git, rg, firecrawl CLI/auth, browser tools and HumanLayer daemon/auth are NOT provisioned. Offline startup: PI_OFFLINE=1 pi. No model call was made.');
 }else{
- const child=spawnSync(process.execPath,[cli,...(passthrough ? input : [...args,...input])],{env,stdio:'inherit'});
- if(child.error) throw child.error;
- process.exit(child.status??1);
+ const child=spawn(process.execPath,[cli,...(passthrough ? input : [...args,...input])],{env,stdio:'inherit'});
+ child.on('error',(error)=>{ throw error; });
+ child.on('exit',(code,signal)=>{ process.exit(code??(signal?1:0)); });
 }
