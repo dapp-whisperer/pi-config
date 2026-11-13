@@ -60,6 +60,7 @@ test('complete Python-free bootstrap and offline runtime preservation', {timeout
   console.log(run(node,[path.join(source,'test_runtime.mjs'),current]).stdout);
   console.log(run(node,[path.join(source,'test_footer.mjs'),current]).stdout);
   console.log(run(node,[path.join(source,'test_links.mjs'),current],true,{env:{...env,FORCE_COLOR:'3'}}).stdout);
+  console.log(run(node,[path.join(source,'test_ask_user_program_status.mjs'),current]).stdout);
   console.log(run(node,[path.join(source,'test_humanlayer_auto_advance.mjs')]).stdout);
   const cli=path.join(current,'source/node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js');
   for(const name of ['pi','pih']) {for(const command of ['auth','mcp']) {const direct=run(node,[cli,command,'--help']),wrapped=run(path.join(bin,name),[command,'--help']);assert.equal(wrapped.stdout,direct.stdout);assert.equal(wrapped.stderr,direct.stderr);}

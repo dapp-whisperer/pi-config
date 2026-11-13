@@ -194,6 +194,17 @@ All other direct extension versions match the live lock. Initial audit: 5 findin
 (3 high/2 moderate). Final `npm audit --omit=dev`: **0 findings**. Registry audit
 is not a comprehensive code or bundled-dependency security audit.
 
+Ask User custom prompts report native OSC 7501 `blocked` / `question` with the
+fixed message `Waiting for user response`, including hidden unanswered overlays.
+The local Pi 1.5.0 patch extends `custom({ blocked })` to overlays (upstream's
+SDK types document inline-only behavior), with independent sources cleared on
+completion or failure. Inline stacking, legacy `herdr:blocked` events, overlay
+layout and hide controls remain unchanged. Native capability detection and
+`PI_PROGRAM_STATUS=0` remain authoritative; there is no extra status transport.
+Cleanup removes overlays once Pi has returned their handle. A pre-existing TUI
+failure during internal attachment before returning a handle can still orphan an
+overlay, but cannot register a new blocked source.
+
 The ask-user overlay uses exact guarded JavaScript replacements; mismatched input fails closed. Startup update guards require
 exactly four compatible call sites across bundled and SDK builds and parse-check
 patched JS. Incompatibility fails before activation. Node downloads use the
@@ -243,9 +254,19 @@ tamper detection, config/auth preservation, conflict
 refusal, same-release rerun and health checks are exercised. No model requests.
 Linux x64 passed locally and in a disposable Debian 12 (bookworm) curl-baseline
 container, including the restricted-PATH bootstrap. These are not Qubes tests. macOS and other architectures require CI/device results;
-the CI matrix is configured, not evidence of a pass. Interactive Pi UI and actual provider, browser, interactive-shell tool sessions,
-or HumanLayer cloud workflows are not tested; the native PTY test is a local shell
-smoke, not an end-to-end model-directed tool invocation.
+the CI matrix is configured, not evidence of a pass. Broader interactive Pi UI workflows and actual provider, browser, interactive-shell tool sessions,
+or HumanLayer cloud workflows are not tested. The shell PTY smoke and
+`test_ask_user_program_status.mjs` exercise native PTYs without model requests.
+The latter runs the real pinned SDK lifecycle/reporter, actual Ask tool registration,
+and bundled CLI command-driven prompts, including hide/reopen, inline, cancellation,
+and OSC 7501 enabled/disabled cases. This proves terminal protocol output, not an
+observed HerdrCore GUI session or an end-to-end model-directed tool invocation.
+The integrated checkout passed 16 isolated bootstrap tests on Linux x64, including
+Ask status and the existing goal/link tests. Earlier isolated Core child-record
+checks used the old `pi-subagents` package; they do not validate the current
+`@tintinweb/pi-subagents` 0.23.1. Read-only inspection of that package found no
+native child OSC status reporter; its widget/footer status is not an OSC record.
+Child status integration remains separate from this Ask fix.
 
 ## Debian Qubes AppVM deployment
 
