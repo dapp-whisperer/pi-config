@@ -1,0 +1,25 @@
+name: Experimental subagents bundle
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  artifact:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24.15.0'
+          cache: npm
+      - run: npm ci --ignore-scripts --legacy-peer-deps --no-audit --no-fund
+      - run: node test_bundle.mjs
+      - run: node subagents-bundle.mjs install
+      - run: python3 tests/bundle-lifecycle/run.py
+      - run: node tests/bundle-workflows/run.mjs
+      - run: python3 tests/bundle-ui/run.py
+      - run: node tests.mjs
